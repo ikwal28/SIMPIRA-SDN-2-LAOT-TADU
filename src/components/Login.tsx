@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { LogIn, Shield, User, Lock, Loader2 } from 'lucide-react';
+import { LogIn, Shield, User, Lock, Loader2, Download } from 'lucide-react';
 import { cn } from '../utils';
+import Swal from 'sweetalert2';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 
 interface LoginProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -10,6 +12,40 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { isMobile, isStandalone, isInstalled, installPWA } = usePWAInstall();
+
+  const handleInstallClick = async () => {
+    const result = await installPWA();
+    
+    if (result === 'already_installed' || isInstalled) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'info',
+        title: 'Aplikasi SIMPIRA sudah terinstal di perangkat Anda',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    } else if (result === 'ios_manual') {
+      Swal.fire({
+        title: 'Install di iOS',
+        html: 'Ketuk ikon <b>Bagikan</b> di bawah, lalu pilih <b>Tambah ke Layar Utama</b>.',
+        icon: 'info',
+        confirmButtonText: 'Mengerti',
+        confirmButtonColor: '#10b981'
+      });
+    } else if (result === 'not_supported') {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'warning',
+        title: 'Browser tidak mendukung instalasi otomatis',
+        showConfirmButton: false,
+        timer: 3000
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +129,20 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
               Lupa password? Hubungi Admin Sekolah
             </p>
           </div>
+
+          {/* PWA Install Button for Mobile */}
+          {isMobile && !isStandalone && (
+            <div className="mt-6 pt-6 border-t border-slate-50">
+              <button
+                onClick={handleInstallClick}
+                type="button"
+                className="w-full py-3.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-2xl font-bold shadow-sm hover:bg-emerald-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <Download size={20} />
+                Install Aplikasi SIMPIRA
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 text-center">

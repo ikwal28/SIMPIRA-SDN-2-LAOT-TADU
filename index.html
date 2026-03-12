@@ -16,28 +16,14 @@
   <body>
     <div id="root"></div>
 
-    <!-- Popup Install HTML -->
-    <div id="pwa-install-popup" class="hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-96 z-[9998] bg-white rounded-2xl shadow-2xl border border-slate-100 p-6 flex-col gap-4 transition-all duration-500">
-      <div class="flex items-start gap-4">
-        <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-200">
-          <img src="https://ui-avatars.com/api/?name=S&background=fff&color=10b981&size=128&font-size=0.65&bold=true" alt="Icon" class="w-8 h-8 rounded-lg" />
-        </div>
-        <div>
-          <h3 class="font-bold text-slate-800 text-lg">Install SIMPIRA MENABUNG</h3>
-          <p class="text-slate-500 text-sm leading-relaxed mt-1">
-            Instal aplikasi agar akses lebih cepat seperti aplikasi mobile banking.
-          </p>
-        </div>
-      </div>
-      <div class="flex gap-3 mt-2">
-        <button onclick="pwaInstall()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-colors shadow-md shadow-emerald-100">
-          Install Sekarang
-        </button>
-      </div>
-    </div>
-
-    <script src="/install-pwa.js"></script>
     <script>
+      // Capture beforeinstallprompt early
+      window.deferredPWAInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPWAInstallPrompt = e;
+      });
+
       // Service Worker Registration
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
