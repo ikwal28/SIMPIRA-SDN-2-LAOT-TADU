@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Search, Plus, Edit2, Trash2, CreditCard, X } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, X } from 'lucide-react';
 import { User } from '../types';
-import { formatCurrency, formatAccount, generateAccountCard, generateBulkCards, generatePDF, cn } from '../utils';
+import { formatCurrency, formatAccount, generatePDF, cn } from '../utils';
 import Swal from 'sweetalert2';
 
 interface SiswaManagerProps {
@@ -102,13 +102,6 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
         </div>
         <div className="flex flex-wrap gap-2">
           <button 
-            onClick={() => generateBulkCards(filteredData)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-xl font-bold shadow-lg shadow-sky-200 hover:bg-sky-600 transition-all text-sm"
-          >
-            <CreditCard size={18} />
-            Cetak Semua Kartu
-          </button>
-          <button 
             onClick={() => {
               setEditingSiswa(null);
               setFormData({ noRekening: '', nama: '', kelas: '', status: 'AKTIF' });
@@ -156,13 +149,6 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex items-center justify-end gap-1">
-                      <button 
-                        onClick={() => generateAccountCard(siswa)}
-                        className="p-1.5 text-sky-500 hover:bg-sky-50 rounded-lg transition-colors"
-                        title="Cetak Kartu"
-                      >
-                        <CreditCard size={16} />
-                      </button>
                       <button 
                         onClick={() => handleEdit(siswa)}
                         className="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"

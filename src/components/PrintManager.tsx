@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, FileText, User as UserIcon, Printer } from 'lucide-react';
 import { User, Transaction } from '../types';
-import { formatCurrency, generatePDF, generateAccountCard, cn } from '../utils';
+import { formatCurrency, generatePDF, cn } from '../utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
@@ -171,22 +171,13 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 pt-2">
-                <button 
-                  onClick={handlePrintKoran}
-                  className="w-full py-3 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
-                >
-                  <FileText size={18} />
-                  Generate Rekening Koran
-                </button>
-                <button 
-                  onClick={() => generateAccountCard(selectedUser)}
-                  className="w-full py-3 bg-sky-500 text-white rounded-2xl font-bold shadow-lg shadow-sky-200 hover:bg-sky-600 transition-all flex items-center justify-center gap-2"
-                >
-                  <Printer size={18} />
-                  Cetak Kartu Anggota
-                </button>
-              </div>
+              <button 
+                onClick={handlePrintKoran}
+                className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+              >
+                <FileText size={20} />
+                Generate Rekening Koran
+              </button>
             </div>
           ) : (
             <div className="p-12 border-2 border-dashed border-slate-100 rounded-3xl flex flex-col items-center justify-center text-slate-300">
