@@ -8,7 +8,8 @@ import { GTKManager } from './components/GTKManager';
 import { TransactionManager } from './components/TransactionManager';
 import { HistoryManager } from './components/HistoryManager';
 import { PrintManager } from './components/PrintManager';
-import { AdminManager } from './components/AdminManager';
+import { SettingsManager } from './components/SettingsManager';
+import { ManualFormManager } from './components/ManualFormManager';
 import { Login } from './components/Login';
 import { About } from './components/About';
 import Swal from 'sweetalert2';
@@ -124,7 +125,7 @@ export default function App() {
       console.log('Active Tab:', activeTab);
       console.log('User Role:', user.role);
       
-      if (['siswa', 'transaksi_siswa', 'koran_siswa'].includes(activeTab) && ['SUPERADMIN', 'ADMINSISWA'].includes(user.role)) {
+      if (['siswa', 'transaksi_siswa', 'koran_siswa', 'pengaturan', 'manual_form'].includes(activeTab) && ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'].includes(user.role)) {
         promises.push(api.getSiswa().then(res => {
           console.log('Siswa Data:', res);
           if (Array.isArray(res)) setSiswa(res);
@@ -273,14 +274,17 @@ export default function App() {
         return <PrintManager type="SISWA" users={siswa} transactions={trxSiswa} />;
       case 'koran_gtk':
         return <PrintManager type="GTK" users={gtk} transactions={trxGTK} />;
+      case 'manual_form':
+        return <ManualFormManager siswa={siswa} />;
       case 'pengaturan':
         return (
-          <AdminManager 
-            data={admins} 
+          <SettingsManager 
+            admins={admins}
+            siswa={siswa}
             currentRole={user.role}
-            onAdd={(d) => handleAction(() => api.addAdmin(d), 'Admin baru ditambahkan')}
-            onUpdate={(u, d) => handleAction(() => api.updateAdmin(u, d), 'Data admin diperbarui')}
-            onDelete={(u) => handleAction(() => api.deleteAdmin(u), 'Admin berhasil dihapus')}
+            onAddAdmin={(d) => handleAction(() => api.addAdmin(d), 'Admin baru ditambahkan')}
+            onUpdateAdmin={(u, d) => handleAction(() => api.updateAdmin(u, d), 'Data admin diperbarui')}
+            onDeleteAdmin={(u) => handleAction(() => api.deleteAdmin(u), 'Admin berhasil dihapus')}
           />
         );
       case 'about':

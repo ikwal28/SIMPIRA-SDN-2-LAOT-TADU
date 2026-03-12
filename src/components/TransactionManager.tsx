@@ -16,6 +16,7 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [nominal, setNominal] = useState<string>('');
   const [jenis, setJenis] = useState<'SETOR' | 'TARIK'>('SETOR');
+  const [tanggal, setTanggal] = useState<string>(new Date().toISOString().split('T')[0]);
   const [isSearching, setIsSearching] = useState(false);
 
   const safeUsers = Array.isArray(users) ? users : [];
@@ -55,11 +56,13 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
         jabatan: selectedUser?.jabatan || (selectedUser as any)?.Jabatan || '',
         nominal: amount,
         jenis,
-        namaAdmin: adminName
+        namaAdmin: adminName,
+        tanggal: tanggal // Pass the selected date
       });
       
       setNominal('');
       setSelectedUser(null);
+      setTanggal(new Date().toISOString().split('T')[0]); // Reset to today
     } catch (error) {
       console.error(error);
     }
@@ -172,6 +175,17 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
                 <ArrowDownLeft size={20} />
                 <span className="font-bold uppercase tracking-widest text-xs">Tarik</span>
               </button>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tanggal Transaksi</label>
+              <input 
+                type="date" 
+                required 
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-bold text-slate-700"
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+              />
             </div>
 
             <div>
