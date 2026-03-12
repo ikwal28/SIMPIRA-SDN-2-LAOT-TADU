@@ -295,8 +295,12 @@ export default function App() {
   };
 
   return (
-    <Layout 
-      sidebarProps={{
+    <div className="relative">
+      <div className="fixed top-0 left-0 z-[9999] bg-red-600 text-white text-[10px] px-2 py-1 font-bold">
+        APP VERSION: 1.0.1 - DATE PICKER ADDED
+      </div>
+      <Layout 
+        sidebarProps={{
         role: user.role,
         activeTab,
         setActiveTab,
@@ -311,5 +315,6 @@ export default function App() {
       )}
       {renderContent()}
     </Layout>
+    </div>
   );
 }
