@@ -1,6 +1,5 @@
 let deferredPrompt;
 const POPUP_ID = 'pwa-install-popup';
-const LATER_KEY = 'simpiraLaterTimestamp';
 const INSTALLED_KEY = 'simpiraInstalled';
 
 // Detect iOS
@@ -28,15 +27,11 @@ window.addEventListener('load', () => {
 
 function initInstallPopup() {
   const isInstalled = localStorage.getItem(INSTALLED_KEY) === 'true';
-  const laterTimestamp = localStorage.getItem(LATER_KEY);
-  const now = Date.now();
   
-  // Check if 24 hours have passed since "Nanti Saja"
-  const isCooldownOver = !laterTimestamp || (now - parseInt(laterTimestamp)) > (24 * 60 * 60 * 1000);
+  console.log('PWA Status:', { isInstalled, isStandalone, isIOS });
 
-  console.log('PWA Status:', { isInstalled, isStandalone, isCooldownOver, isIOS });
-
-  if (!isInstalled && !isStandalone && isCooldownOver) {
+  // Only show if not installed and not in standalone mode
+  if (!isInstalled && !isStandalone) {
     showPopup();
   }
 }
@@ -54,7 +49,7 @@ function showPopup() {
     const installBtn = popup.querySelector('button[onclick="pwaInstall()"]');
     if (installBtn) {
       installBtn.innerHTML = 'Mengerti';
-      installBtn.onclick = handleLater; // Just hide it
+      installBtn.onclick = hidePopup; // Just hide it
     }
   }
 
@@ -63,15 +58,22 @@ function showPopup() {
   popup.classList.add('flex');
   
   console.log('PWA Install Popup shown');
+
+  // Auto hide after 10 seconds
+  setTimeout(() => {
+    console.log('PWA Popup auto-hiding after 10s');
+    hidePopup();
+  }, 10000);
 }
 
 function hidePopup() {
   const popup = document.getElementById(POPUP_ID);
-  if (popup) {
+  if (popup && !popup.classList.contains('hidden')) {
     popup.classList.add('opacity-0');
     setTimeout(() => {
       popup.classList.add('hidden');
       popup.classList.remove('opacity-0');
+      popup.classList.remove('flex');
     }, 500);
   }
 }
@@ -93,16 +95,12 @@ function handleInstall() {
   });
 }
 
-function handleLater() {
-  localStorage.setItem(LATER_KEY, Date.now().toString());
-  hidePopup();
-}
-
 window.addEventListener('appinstalled', (evt) => {
   localStorage.setItem(INSTALLED_KEY, 'true');
   console.log('SIMPIRA was installed');
+  hidePopup();
 });
 
 // Global functions for HTML buttons
 window.pwaInstall = handleInstall;
-window.pwaLater = handleLater;
+window.pwaLater = hidePopup; // Keep it for compatibility but it's just hide now
