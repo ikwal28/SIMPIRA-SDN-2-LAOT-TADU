@@ -1,12 +1,115 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SIMPIRA MENABUNG</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SIMPIRA" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2845/2845939.png" />
+
+    <style>
+      /* Splash Screen Styles */
+      #pwa-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #2563eb;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+      }
+      .fade-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .spinner {
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-top: 20px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulse-fade {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(0.95); }
+      }
+      .animate-pulse-custom {
+        animation: pulse-fade 2s infinite ease-in-out;
+      }
+    </style>
   </head>
   <body>
+    <!-- Splash Screen HTML -->
+    <div id="pwa-splash">
+      <div class="animate-pulse-custom flex flex-col items-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/2845/2845939.png" alt="Logo" width="100" height="100" />
+        <h1 style="color: white; font-family: sans-serif; font-weight: bold; font-size: 24px; margin-top: 15px; letter-spacing: 1px;">
+          SIMPIRA MENABUNG
+        </h1>
+      </div>
+      <div class="spinner"></div>
+    </div>
+
     <div id="root"></div>
+
+    <!-- Popup Install HTML -->
+    <div id="pwa-install-popup" class="hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-96 z-[9998] bg-white rounded-2xl shadow-2xl border border-slate-100 p-6 flex-col gap-4 transition-all duration-500">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
+          <img src="https://cdn-icons-png.flaticon.com/512/2845/2845939.png" alt="Icon" class="w-8 h-8 invert" />
+        </div>
+        <div>
+          <h3 class="font-bold text-slate-800 text-lg">Install SIMPIRA MENABUNG</h3>
+          <p class="text-slate-500 text-sm leading-relaxed mt-1">
+            Instal aplikasi agar akses lebih cepat seperti aplikasi mobile banking.
+          </p>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-2">
+        <button onclick="pwaInstall()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors shadow-md shadow-blue-100">
+          Install
+        </button>
+        <button onclick="pwaLater()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">
+          Nanti saja
+        </button>
+      </div>
+    </div>
+
+    <script src="/install-pwa.js"></script>
+    <script>
+      // Splash Screen Logic
+      window.addEventListener('load', () => {
+        const splash = document.getElementById('pwa-splash');
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const delay = isStandalone ? 2500 : 1500;
+        
+        setTimeout(() => {
+          splash.classList.add('fade-out');
+        }, delay);
+      });
+
+      // Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('SW Registered!', reg))
+            .catch(err => console.log('SW Registration Failed!', err));
+        });
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
