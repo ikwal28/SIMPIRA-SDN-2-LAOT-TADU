@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowUpRight, ArrowDownLeft, Wallet, User } from 'lucide-react';
+import { Search, ArrowUpRight, ArrowDownLeft, Wallet, User, Calendar } from 'lucide-react';
 import { User as UserType, Transaction } from '../types';
 import { formatCurrency, cn } from '../utils';
 import Swal from 'sweetalert2';
@@ -179,13 +179,16 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
 
             <div>
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tanggal Transaksi</label>
-              <input 
-                type="date" 
-                required 
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-bold text-slate-700"
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-              />
+              <div className="relative">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
+                <input 
+                  type="date" 
+                  required 
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-bold text-slate-700"
+                  value={tanggal}
+                  onChange={(e) => setTanggal(e.target.value)}
+                />
+              </div>
             </div>
 
             <div>
