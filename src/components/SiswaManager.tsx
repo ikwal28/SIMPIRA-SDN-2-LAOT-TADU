@@ -116,8 +116,8 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
       </div>
 
       <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-        <div className="overflow-y-auto flex-1 custom-scrollbar">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-auto flex-1 custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[600px]">
             <thead className="sticky top-0 z-10">
               <tr className="bg-slate-50 border-b border-slate-100">
                 <th className="px-4 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">No Rekening</th>

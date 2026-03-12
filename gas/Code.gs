@@ -35,6 +35,19 @@ function handleRequest(params) {
       props.setProperty('INITIALIZED', 'true');
     }
     
+    // Validate session for all actions except login
+    if (action !== 'login') {
+      const authUser = payload._authUser;
+      const sessionToken = payload._sessionToken;
+      if (!authUser || !sessionToken) {
+        return createResponse({ success: false, error: 'SESSION_EXPIRED' });
+      }
+      const storedToken = props.getProperty('SESSION_' + authUser);
+      if (storedToken !== sessionToken) {
+        return createResponse({ success: false, error: 'SESSION_EXPIRED' });
+      }
+    }
+    
     const result = handleAction(action, payload);
     return createResponse(result);
   } catch (error) {
@@ -136,14 +149,27 @@ function getSheetData(sheetName) {
 }
 
 function login(username, password) {
+  const props = PropertiesService.getScriptProperties();
+  const token = Utilities.getUuid();
+  
   const admin = getSheetData('ADMIN').find(u => u.Username === username && u.Password === password);
-  if (admin) return { success: true, user: { ...admin, role: admin.Role, nama: admin.Nama } };
+  if (admin) {
+    props.setProperty('SESSION_' + admin.Username, token);
+    return { success: true, user: { ...admin, role: admin.Role, nama: admin.Nama, sessionToken: token } };
+  }
   
   const siswa = getSheetData('SISWA').find(u => u['No Rekening'] === username && u.Password === password);
-  if (siswa) return { success: true, user: { ...siswa, role: 'SISWA', nama: siswa.Nama, noRekening: siswa['No Rekening'] } };
+  if (siswa) {
+    props.setProperty('SESSION_' + siswa['No Rekening'], token);
+    return { success: true, user: { ...siswa, role: 'SISWA', nama: siswa.Nama, noRekening: siswa['No Rekening'], sessionToken: token } };
+  }
   
   const gtk = getSheetData('GTK').find(u => (u.Username === username || u['No Rekening'] === username) && u.Password === password);
-  if (gtk) return { success: true, user: { ...gtk, role: 'GTK', nama: gtk.Nama, noRekening: gtk['No Rekening'] } };
+  if (gtk) {
+    const gtkUsername = gtk.Username || gtk['No Rekening'];
+    props.setProperty('SESSION_' + gtkUsername, token);
+    return { success: true, user: { ...gtk, role: 'GTK', nama: gtk.Nama, noRekening: gtk['No Rekening'], username: gtkUsername, sessionToken: token } };
+  }
   
   return { success: false, error: 'Username atau Password salah' };
 }
@@ -154,6 +180,13 @@ function getDashboard(role, username) {
   
   const totalSiswa = siswa.reduce((acc, curr) => acc + (parseFloat(curr.Saldo) || 0), 0);
   const totalGTK = gtk.reduce((acc, curr) => acc + (parseFloat(curr.Saldo) || 0), 0);
+  
+  let userInfo = null;
+  if (role === 'SISWA') {
+    userInfo = siswa.find(u => u['No Rekening'] === username);
+  } else if (role === 'GTK') {
+    userInfo = gtk.find(u => u['No Rekening'] === username || u.Username === username);
+  }
   
   return {
     success: true,
@@ -166,7 +199,8 @@ function getDashboard(role, username) {
         { name: 'Siswa', value: totalSiswa },
         { name: 'GTK', value: totalGTK }
       ]
-    }
+    },
+    userInfo: userInfo
   };
 }
 

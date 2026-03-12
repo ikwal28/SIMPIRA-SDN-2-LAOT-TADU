@@ -34,11 +34,62 @@ export default function App() {
 
   // Check session
   useEffect(() => {
-    const savedUser = localStorage.getItem('simpira_user');
+    const savedUser = sessionStorage.getItem('simpira_user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+
+    // Handle session expired from another device
+    const handleSessionExpired = () => {
+      setUser(null);
+      sessionStorage.removeItem('simpira_user');
+      setActiveTab('dashboard');
+      Swal.fire({
+        title: 'Session Berakhir',
+        text: 'Session anda telah berakhir karena login di perangkat lain',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+    };
+
+    window.addEventListener('session_expired', handleSessionExpired);
+    return () => window.removeEventListener('session_expired', handleSessionExpired);
   }, []);
+
+  // Handle inactivity timeout (10 minutes)
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId: NodeJS.Timeout;
+    const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setUser(null);
+        sessionStorage.removeItem('simpira_user');
+        setActiveTab('dashboard');
+        Swal.fire({
+          title: 'Sesi Berakhir',
+          text: 'Anda telah logout otomatis karena tidak ada aktivitas selama 10 menit.',
+          icon: 'info',
+          confirmButtonText: 'OK'
+        });
+      }, INACTIVITY_LIMIT);
+    };
+
+    // Events to track activity
+    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => document.addEventListener(event, resetTimer));
+    
+    // Initial start
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach(event => document.removeEventListener(event, resetTimer));
+    };
+  }, [user]);
 
   // Fetch data when user changes or tab changes
   useEffect(() => {
@@ -55,8 +106,17 @@ export default function App() {
 
       // Always fetch dashboard stats as they are small and often needed
       if (activeTab === 'dashboard') {
-        promises.push(api.getDashboard(user.role, user.username || user.noRekening!).then(res => {
-          if (res.success) setStats(res.stats);
+        const identifier = user.username || user.noRekening || (user as any)['No Rekening'] || '';
+        promises.push(api.getDashboard(user.role, identifier).then(res => {
+          if (res.success) {
+            setStats(res.stats);
+            if (res.userInfo) {
+              // Update user state with latest balance
+              const updatedUser = { ...user, saldo: res.userInfo.Saldo || res.userInfo.saldo || 0, status: res.userInfo.Status || res.userInfo.status || 'AKTIF' };
+              setUser(updatedUser);
+              sessionStorage.setItem('simpira_user', JSON.stringify(updatedUser));
+            }
+          }
         }));
       }
 
@@ -99,12 +159,12 @@ export default function App() {
 
       // Initial load for users
       if (user.role === 'SISWA' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('SISWA', user.noRekening).then(res => {
+        promises.push(api.getTransactions('SISWA', user.noRekening || (user as any)['No Rekening']).then(res => {
           if (Array.isArray(res)) setTrxSiswa(res);
         }));
       }
       if (user.role === 'GTK' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('GTK', user.noRekening).then(res => {
+        promises.push(api.getTransactions('GTK', user.noRekening || (user as any)['No Rekening']).then(res => {
           if (Array.isArray(res)) setTrxGTK(res);
         }));
       }
@@ -122,9 +182,9 @@ export default function App() {
       const res = await api.login(username, password);
       if (res.success) {
         setUser(res.user);
-        localStorage.setItem('simpira_user', JSON.stringify(res.user));
+        sessionStorage.setItem('simpira_user', JSON.stringify(res.user));
         Swal.fire({
-          title: `Selamat Datang, ${res.user.nama}!`,
+          title: `Selamat Datang, ${res.user.nama || res.user.Nama || 'User'}!`,
           text: 'Login berhasil',
           icon: 'success',
           timer: 2000,
@@ -140,7 +200,7 @@ export default function App() {
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('simpira_user');
+    sessionStorage.removeItem('simpira_user');
     setActiveTab('dashboard');
   };
 
@@ -168,7 +228,7 @@ export default function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard stats={stats} user={user} />;
+        return <Dashboard stats={stats} user={user} transactions={user.role === 'SISWA' ? trxSiswa : trxGTK} />;
       case 'siswa':
         return (
           <SiswaManager 
@@ -192,7 +252,7 @@ export default function App() {
           <TransactionManager 
             type="SISWA" 
             users={siswa} 
-            adminName={user.nama}
+            adminName={user.nama || (user as any).Nama || 'Admin'}
             onTransaction={(t, d) => handleAction(() => api.addTransaction(t, d), 'Transaksi berhasil')}
           />
         );
@@ -201,7 +261,7 @@ export default function App() {
           <TransactionManager 
             type="GTK" 
             users={gtk} 
-            adminName={user.nama}
+            adminName={user.nama || (user as any).Nama || 'Admin'}
             onTransaction={(t, d) => handleAction(() => api.addTransaction(t, d), 'Transaksi berhasil')}
           />
         );
@@ -226,7 +286,7 @@ export default function App() {
       case 'about':
         return <About />;
       default:
-        return <Dashboard stats={stats} user={user} />;
+        return <Dashboard stats={stats} user={user} transactions={user.role === 'SISWA' ? trxSiswa : trxGTK} />;
     }
   };
 

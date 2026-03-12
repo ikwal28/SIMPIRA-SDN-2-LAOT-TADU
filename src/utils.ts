@@ -63,27 +63,27 @@ export function generatePDF(title: string, headers: string[], data: any[][], fil
     doc.text(':', midX - 5, 52);
     doc.setTextColor(15, 23, 42); // Slate 900
     doc.setFont('helvetica', 'bold');
-    doc.text(personalInfo.nama, midX, 52);
+    doc.text(String(personalInfo.nama || ''), midX, 52);
     
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
     doc.text('No. Rekening', leftX, 59);
     doc.text(':', midX - 5, 59);
     doc.setTextColor(15, 23, 42);
-    doc.text(personalInfo.noRekening, midX, 59);
+    doc.text(String(personalInfo.noRekening || ''), midX, 59);
     
     doc.setTextColor(71, 85, 105);
     doc.text(personalInfo.kelas ? 'Kelas' : 'Jabatan', leftX, 66);
     doc.text(':', midX - 5, 66);
     doc.setTextColor(15, 23, 42);
-    doc.text(personalInfo.kelas || personalInfo.jabatan, midX, 66);
+    doc.text(String(personalInfo.kelas || personalInfo.jabatan || ''), midX, 66);
     
     doc.setTextColor(71, 85, 105);
     doc.text('Saldo Terakhir', leftX, 73);
     doc.text(':', midX - 5, 73);
     doc.setTextColor(16, 185, 129); // Emerald 600
     doc.setFont('helvetica', 'bold');
-    doc.text(formatCurrency(personalInfo.saldo), midX, 73);
+    doc.text(String(formatCurrency(personalInfo.saldo || 0)), midX, 73);
     
     doc.setFont('helvetica', 'normal');
     startY = 88;
@@ -181,10 +181,10 @@ export function generateAccountCard(user: any) {
   const drawField = (label: string, value: any) => {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(100, 116, 139); // Slate 500
-    doc.text(label, startX, currentY);
+    doc.text(String(label || ''), startX, currentY);
     doc.setTextColor(15, 23, 42); // Slate 900
     doc.text(':', startX + 22, currentY);
-    doc.text((value || '-').toString(), startX + 25, currentY);
+    doc.text(String(value || '-'), startX + 25, currentY);
     currentY += lineGap;
   };
 
@@ -225,11 +225,11 @@ export function generateAccountCard(user: any) {
 
   doc.text('Username', startX, currentY);
   doc.text(':', startX + 15, currentY);
-  doc.text(username.toString(), startX + 18, currentY);
+  doc.text(String(username || '-'), startX + 18, currentY);
   
   doc.text('Password', startX, currentY + 4);
   doc.text(':', startX + 15, currentY + 4);
-  doc.text(password.toString(), startX + 18, currentY + 4);
+  doc.text(String(password || '-'), startX + 18, currentY + 4);
 
   // Footer
   doc.setFillColor(248, 250, 252); // Slate 50

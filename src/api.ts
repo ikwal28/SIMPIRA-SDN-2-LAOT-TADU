@@ -10,6 +10,15 @@ async function request(action: string, payload: any = {}) {
     throw new Error('API URL not configured');
   }
 
+  // Add session info
+  const userStr = sessionStorage.getItem('simpira_user');
+  if (userStr && action !== 'login') {
+    const user = JSON.parse(userStr);
+    payload._authUser = user.username || user.noRekening || user['No Rekening'] || '';
+    payload._authRole = user.role;
+    payload._sessionToken = user.sessionToken;
+  }
+
   // Use GET for all requests to avoid CORS preflight and double-fetching issues with GAS
   // This is the fastest way to interact with GAS Web Apps from a browser
   const url = new URL(SCRIPT_URL);
@@ -28,6 +37,14 @@ async function request(action: string, payload: any = {}) {
     }
 
     const result = await response.json();
+    
+    // Handle session expiration
+    if (result && result.success === false && result.error === 'SESSION_EXPIRED') {
+      // Dispatch a custom event to trigger logout in App.tsx
+      window.dispatchEvent(new CustomEvent('session_expired'));
+      throw new Error('SESSION_EXPIRED');
+    }
+    
     return result;
   } catch (error) {
     console.error('API Request Error:', error);

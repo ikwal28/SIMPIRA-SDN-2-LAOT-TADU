@@ -44,23 +44,28 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
   const filteredMenu = menuItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-slate-50">
+    <div className="h-screen flex flex-col md:flex-row bg-slate-50 overflow-hidden">
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-primary text-white sticky top-0 z-50 shadow-md">
+      <div className="md:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
             <span className="text-primary font-bold text-xl">S</span>
           </div>
           <span className="font-bold tracking-tight">SIMPIRA</span>
         </div>
-        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-4">
+          <button onClick={onLogout} className="text-white/80 hover:text-white">
+            <LogOut size={20} />
+          </button>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
-      {/* Sidebar Desktop */}
+      {/* Sidebar Desktop & Mobile Drawer */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-none",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-full flex flex-col">
@@ -98,8 +103,8 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="hidden md:flex items-center justify-between px-8 py-3 bg-white border-b border-slate-100">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        <header className="hidden md:flex flex-none items-center justify-between px-8 py-3 bg-white border-b border-slate-100">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-bold text-slate-800 capitalize">
               {activeTab.replace('_', ' ')}
@@ -113,11 +118,11 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-sm font-bold text-slate-800 leading-none">{user.nama}</p>
+                <p className="text-sm font-bold text-slate-800 leading-none">{user.nama || (user as any).Nama || 'User'}</p>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase mt-1">{role}</p>
               </div>
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold border border-primary/10">
-                {user.nama.charAt(0)}
+                {(user.nama || (user as any).Nama || 'U').charAt(0)}
               </div>
             </div>
             <div className="h-8 w-[1px] bg-slate-100" />
@@ -136,7 +141,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
         </div>
 
         {/* Mobile Bottom Nav */}
-        <div className="md:hidden bg-white border-t border-slate-100 px-2 py-2 flex justify-around items-center sticky bottom-0 z-50">
+        <div className="md:hidden flex-none bg-white border-t border-slate-100 px-2 py-2 flex justify-around items-center z-50">
           {filteredMenu.slice(0, 4).map((item) => (
             <button
               key={item.id}
