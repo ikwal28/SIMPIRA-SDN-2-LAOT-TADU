@@ -47,17 +47,21 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
     <div className="h-screen flex flex-col md:flex-row bg-slate-50 overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-primary font-bold text-xl">S</span>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border border-white/30 shadow-inner">
+            <span className="text-white font-bold text-lg">
+              {(user.nama || (user as any).Nama || 'U').charAt(0)}
+            </span>
           </div>
-          <span className="font-bold tracking-tight">SIMPIRA</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-white/80 font-medium uppercase tracking-wider">Selamat Datang,</span>
+            <span className="font-bold text-sm truncate max-w-[160px]">
+              {user.nama || (user as any).Nama || 'User'}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <button onClick={onLogout} className="text-white/80 hover:text-white">
-            <LogOut size={20} />
-          </button>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -98,6 +102,16 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
                 {item.label}
               </button>
             ))}
+          </div>
+          
+          <div className="p-4 border-t border-slate-100 md:hidden">
+            <button 
+              onClick={onLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
+            >
+              <LogOut size={18} />
+              Keluar
+            </button>
           </div>
         </div>
       </aside>
@@ -142,7 +156,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
 
         {/* Mobile Bottom Nav */}
         <div className="md:hidden flex-none bg-white border-t border-slate-100 px-2 py-2 flex justify-around items-center z-50">
-          {filteredMenu.slice(0, 4).map((item) => (
+          {[...filteredMenu.filter(m => m.id !== 'about').slice(0, 4), menuItems.find(m => m.id === 'about')!].map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
@@ -155,13 +169,6 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
               <span className="text-[10px] font-bold">{item.label.split(' ')[0]}</span>
             </button>
           ))}
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="flex flex-col items-center gap-1 p-2 text-slate-400"
-          >
-            <Menu size={20} />
-            <span className="text-[10px] font-bold">Menu</span>
-          </button>
         </div>
       </main>
 
