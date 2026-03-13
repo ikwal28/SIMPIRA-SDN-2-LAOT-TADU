@@ -140,7 +140,7 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
             {isKoran && (
               <button 
                 onClick={handlePrintRekapan}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-cyan-600 transition-all"
               >
                 <FileText size={20} />
                 Cetak Rekapan
@@ -149,7 +149,7 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
             {!isKoran && (
               <button 
                 onClick={handlePrintAll}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-cyan-600 transition-all"
               >
                 <FileText size={20} />
                 Cetak Laporan
@@ -187,14 +187,14 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
                   <td className="px-6 py-4">
                     <span className={cn(
                       "px-3 py-1 rounded-full text-[10px] font-bold uppercase",
-                      (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
+                      (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-teal-100 text-teal-600" : "bg-red-100 text-red-600"
                     )}>
                       {trx?.jenis || (trx as any)?.Jenis || '-'}
                     </span>
                   </td>
                   <td className={cn(
                     "px-6 py-4 font-bold",
-                    (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-emerald-600" : "text-red-600"
+                    (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-teal-600" : "text-red-600"
                   )}>
                     {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? '+' : '-'} {formatCurrency(Number(trx?.nominal || (trx as any)?.Nominal || 0))}
                   </td>
@@ -205,7 +205,7 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
                         {isKoran ? (
                           <button 
                             onClick={() => handlePrintKoran((trx?.noRekening || (trx as any)?.['No Rekening'] || '').toString(), trx?.nama || (trx as any)?.Nama || '')}
-                            className="p-2 text-sky-500 hover:bg-sky-50 rounded-lg transition-colors"
+                            className="p-2 text-cyan-500 hover:bg-cyan-50 rounded-lg transition-colors"
                             title="Cetak Rekening Koran"
                           >
                             <FileText size={18} />

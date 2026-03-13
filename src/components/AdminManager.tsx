@@ -100,7 +100,7 @@ export const AdminManager: React.FC<AdminManagerProps> = ({ data, currentRole, o
               setFormData({ username: '', password: '', role: 'ADMINSISWA', nama: '' });
               setIsModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all text-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all text-sm"
           >
             <Plus size={18} />
             Tambah Admin
@@ -127,7 +127,7 @@ export const AdminManager: React.FC<AdminManagerProps> = ({ data, currentRole, o
                   <td className="px-4 py-2">
                     <span className={cn(
                       "px-2 py-0.5 rounded-full text-[9px] font-bold uppercase",
-                      (admin?.role || (admin as any)?.Role) === 'SUPERADMIN' ? "bg-indigo-100 text-indigo-600" : "bg-sky-100 text-sky-600"
+                      (admin?.role || (admin as any)?.Role) === 'SUPERADMIN' ? "bg-orange-100 text-orange-600" : "bg-cyan-100 text-cyan-600"
                     )}>
                       {admin?.role || (admin as any)?.Role || '-'}
                     </span>
@@ -222,7 +222,7 @@ export const AdminManager: React.FC<AdminManagerProps> = ({ data, currentRole, o
               <div className="pt-4">
                 <button 
                   type="submit"
-                  className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all"
+                  className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all"
                 >
                   {editingAdmin ? 'Simpan Perubahan' : 'Tambah Admin'}
                 </button>

@@ -36,7 +36,7 @@ export const ClassPromotionManager: React.FC<ClassPromotionManagerProps> = ({ on
   return (
     <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-8">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
+        <div className="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center text-teal-600">
           <GraduationCap size={24} />
         </div>
         <div>
@@ -48,7 +48,7 @@ export const ClassPromotionManager: React.FC<ClassPromotionManagerProps> = ({ on
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
           <h4 className="font-bold text-slate-700 flex items-center gap-2">
-            <CheckCircle2 size={18} className="text-emerald-500" />
+            <CheckCircle2 size={18} className="text-teal-500" />
             Aturan Kenaikan Kelas
           </h4>
           <ul className="space-y-3">
@@ -79,7 +79,7 @@ export const ClassPromotionManager: React.FC<ClassPromotionManagerProps> = ({ on
             <button
               onClick={handlePromote}
               disabled={isProcessing}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-200"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-teal-500 hover:bg-teal-600 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-200"
             >
               {isProcessing ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

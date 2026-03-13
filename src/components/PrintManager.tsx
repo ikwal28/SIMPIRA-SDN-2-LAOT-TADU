@@ -209,7 +209,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                       <p className="text-[10px] text-slate-400 font-mono">{user?.['No Rekening'] || user?.noRekening || '-'}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] font-bold text-emerald-600">{formatCurrency(Number(user?.saldo || (user as any)?.Saldo || 0))}</p>
+                      <p className="text-[10px] font-bold text-teal-600">{formatCurrency(Number(user?.saldo || (user as any)?.Saldo || 0))}</p>
                     </div>
                   </button>
                 ))}
@@ -241,7 +241,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="p-3 bg-white rounded-xl border border-slate-100">
                   <p className="text-[10px] text-slate-400 uppercase font-bold">Saldo</p>
-                  <p className="font-bold text-emerald-600">{formatCurrency(Number(selectedUser?.saldo || (selectedUser as any)?.Saldo || 0))}</p>
+                  <p className="font-bold text-teal-600">{formatCurrency(Number(selectedUser?.saldo || (selectedUser as any)?.Saldo || 0))}</p>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-slate-100">
                   <p className="text-[10px] text-slate-400 uppercase font-bold">{type === 'SISWA' ? 'Kelas' : 'Jabatan'}</p>
@@ -251,7 +251,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
 
               <button 
                 onClick={handlePrintKoran}
-                className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-2"
               >
                 <FileText size={20} />
                 Generate Rekening Koran
@@ -288,7 +288,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
 
             <button 
               onClick={handlePrintRekapan}
-              className="w-full mt-6 py-4 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all flex items-center justify-center gap-2"
+              className="w-full mt-6 py-4 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-cyan-600 transition-all flex items-center justify-center gap-2"
             >
               <Printer size={20} />
               Cetak Rekapan Semua {type}
@@ -333,7 +333,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                 </button>
                 <button 
                   onClick={handlePrintRekapanLulus}
-                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-teal-500 text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-2"
                 >
                   <Printer size={20} />
                   Cetak Rekapan Siswa Lulus

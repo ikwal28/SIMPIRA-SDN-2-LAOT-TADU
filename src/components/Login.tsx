@@ -60,10 +60,11 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-100/60 via-slate-100 to-sky-100/60 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-teal-100/60 via-orange-50/50 to-cyan-100/60 relative overflow-hidden">
       {/* Decorative Elements */}
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-700" />
+      <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/15 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-secondary/15 rounded-full blur-3xl animate-pulse delay-700" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-500" />
       
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
@@ -113,7 +114,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/30 hover:bg-emerald-600 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+              className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/30 hover:bg-teal-600 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={24} />
@@ -138,7 +139,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <button
                 onClick={handleInstallClick}
                 type="button"
-                className="w-full py-3.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-2xl font-bold shadow-sm hover:bg-emerald-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-teal-50 text-teal-600 border border-teal-200 rounded-2xl font-bold shadow-sm hover:bg-teal-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Download size={20} />
                 Install Aplikasi SIMPIRA

@@ -196,7 +196,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
             </p>
           )}
           {siswa.length > 0 && (
-            <p className="text-[10px] text-emerald-600 font-bold mt-1 uppercase tracking-wider">
+            <p className="text-[10px] text-teal-600 font-bold mt-1 uppercase tracking-wider">
               ✓ {siswa.length} Data Siswa Siap Cetak
             </p>
           )}
@@ -259,7 +259,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
               onClick={generatePDF}
               disabled={isGenerating}
               className={cn(
-                "w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-3",
+                "w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-3",
                 isGenerating && "opacity-70 cursor-not-allowed"
               )}
             >

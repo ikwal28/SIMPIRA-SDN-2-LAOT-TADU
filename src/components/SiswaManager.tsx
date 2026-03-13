@@ -107,7 +107,7 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
               setFormData({ noRekening: '', nama: '', kelas: '', status: 'AKTIF' });
               setIsModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all text-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all text-sm"
           >
             <Plus size={18} />
             Tambah Siswa
@@ -138,11 +138,11 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
                   </td>
                   <td className="px-4 py-2 font-bold text-slate-700 text-sm">{siswa?.nama || (siswa as any)?.Nama || '-'}</td>
                   <td className="px-4 py-2 text-slate-500 text-sm">{siswa?.kelas || (siswa as any)?.Kelas || '-'}</td>
-                  <td className="px-4 py-2 font-bold text-emerald-600 text-sm">{formatCurrency(Number(siswa?.saldo || (siswa as any)?.Saldo || 0))}</td>
+                  <td className="px-4 py-2 font-bold text-teal-600 text-sm">{formatCurrency(Number(siswa?.saldo || (siswa as any)?.Saldo || 0))}</td>
                   <td className="px-4 py-2">
                     <span className={cn(
                       "px-2 py-0.5 rounded-full text-[9px] font-bold uppercase",
-                      (siswa?.status || (siswa as any)?.Status) === 'AKTIF' ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
+                      (siswa?.status || (siswa as any)?.Status) === 'AKTIF' ? "bg-teal-100 text-teal-600" : "bg-red-100 text-red-600"
                     )}>
                       {siswa?.status || (siswa as any)?.Status || '-'}
                     </span>
@@ -244,7 +244,7 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
               <div className="pt-4">
                 <button 
                   type="submit"
-                  className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all"
+                  className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all"
                 >
                   {editingSiswa ? 'Simpan Perubahan' : 'Daftarkan Siswa'}
                 </button>

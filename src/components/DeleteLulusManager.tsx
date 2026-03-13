@@ -84,7 +84,7 @@ export const DeleteLulusManager: React.FC<DeleteLulusManagerProps> = ({ siswa, o
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+          <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
             <Users size={24} />
           </div>
           <div>
@@ -94,7 +94,7 @@ export const DeleteLulusManager: React.FC<DeleteLulusManagerProps> = ({ siswa, o
         </div>
         
         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4">
-          <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+          <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
             <span className="font-bold text-lg">Rp</span>
           </div>
           <div>
@@ -125,7 +125,7 @@ export const DeleteLulusManager: React.FC<DeleteLulusManagerProps> = ({ siswa, o
                     <td className="p-4 text-sm font-medium text-slate-700">{s.noRekening || (s as any)['No Rekening']}</td>
                     <td className="p-4 text-sm font-bold text-slate-800">{s.nama || (s as any).Nama}</td>
                     <td className="p-4 text-sm text-slate-600">{s.kelas || (s as any).Kelas}</td>
-                    <td className="p-4 text-sm font-bold text-emerald-600 text-right">
+                    <td className="p-4 text-sm font-bold text-teal-600 text-right">
                       Rp {Number(s.saldo || (s as any).Saldo || 0).toLocaleString('id-ID')}
                     </td>
                   </tr>

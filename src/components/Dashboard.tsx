@@ -60,7 +60,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
   return (
     <div className="space-y-4">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-br from-primary to-emerald-600 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-primary to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
         <div className="relative z-10">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang, {user.nama || (user as any).Nama || 'User'}!</h1>
           <p className="text-white/80 text-sm md:text-base max-w-md">
@@ -82,7 +82,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                 title="Total Tabungan Siswa" 
                 value={formatCurrency(safeStats.totalTabunganSiswa)} 
                 icon={Wallet} 
-                color="bg-emerald-50 text-emerald-600"
+                color="bg-teal-50 text-teal-600"
               />
             )}
             {(isSuperAdmin || isAdminGTK) && (
@@ -90,7 +90,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                 title="Total Tabungan GTK" 
                 value={formatCurrency(safeStats.totalTabunganGTK)} 
                 icon={TrendingUp} 
-                color="bg-sky-50 text-sky-600"
+                color="bg-cyan-50 text-cyan-600"
               />
             )}
             {(isSuperAdmin || isAdminSiswa) && (
@@ -106,7 +106,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                 title="Jumlah GTK" 
                 value={safeStats.jumlahGTK.toString()} 
                 icon={UserCheck} 
-                color="bg-indigo-50 text-indigo-600"
+                color="bg-orange-50 text-orange-600"
               />
             )}
           </>
@@ -124,15 +124,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                  <div className="flex-1 bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
-                    <div className="flex items-center gap-2 text-emerald-600 mb-1">
+                  <div className="flex-1 bg-teal-50 p-4 rounded-2xl border border-teal-100">
+                    <div className="flex items-center gap-2 text-teal-600 mb-1">
                       <ArrowUpRight size={16} />
                       <span className="text-xs font-bold uppercase">No Rekening</span>
                     </div>
                     <p className="text-lg font-bold text-slate-800">{user.noRekening || (user as any)['No Rekening']}</p>
                   </div>
-                  <div className="flex-1 bg-sky-50 p-4 rounded-2xl border border-sky-100">
-                    <div className="flex items-center gap-2 text-sky-600 mb-1">
+                  <div className="flex-1 bg-cyan-50 p-4 rounded-2xl border border-cyan-100">
+                    <div className="flex items-center gap-2 text-cyan-600 mb-1">
                       <UserCheck size={16} />
                       <span className="text-xs font-bold uppercase">Status</span>
                     </div>
@@ -155,7 +155,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                         <div className="flex items-center gap-4">
                           <div className={cn(
                             "w-12 h-12 rounded-xl flex items-center justify-center",
-                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"
+                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-teal-100 text-teal-600" : "bg-red-100 text-red-600"
                           )}>
                             {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
                           </div>
@@ -169,7 +169,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
                         <div className="text-right">
                           <p className={cn(
                             "font-bold",
-                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-emerald-600" : "text-red-600"
+                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-teal-600" : "text-red-600"
                           )}>
                             {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? '+' : '-'} {formatCurrency(Number(trx?.nominal || (trx as any)?.Nominal || 0))}
                           </p>

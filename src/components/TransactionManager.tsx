@@ -113,7 +113,7 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
                         <p className="text-[10px] text-slate-400 font-mono">{user?.['No Rekening'] || user?.noRekening || '-'}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold text-emerald-600">{formatCurrency(Number(user?.saldo || (user as any)?.Saldo || 0))}</p>
+                        <p className="text-[10px] font-bold text-teal-600">{formatCurrency(Number(user?.saldo || (user as any)?.Saldo || 0))}</p>
                       </div>
                     </button>
                   ))}
@@ -158,7 +158,7 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
                 onClick={() => setJenis('SETOR')}
                 className={cn(
                   "flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all",
-                  jenis === 'SETOR' ? "border-emerald-500 bg-emerald-50 text-emerald-600" : "border-slate-100 bg-slate-50 text-slate-400"
+                  jenis === 'SETOR' ? "border-teal-500 bg-teal-50 text-teal-600" : "border-slate-100 bg-slate-50 text-slate-400"
                 )}
               >
                 <ArrowUpRight size={20} />
@@ -209,7 +209,7 @@ export const TransactionManager: React.FC<TransactionManagerProps> = ({ type, us
             <button 
               type="submit"
               disabled={!selectedUser || !nominal}
-              className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-emerald-600 transition-all disabled:opacity-50 disabled:shadow-none"
+              className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all disabled:opacity-50 disabled:shadow-none"
             >
               Proses Transaksi
             </button>

@@ -16,7 +16,7 @@ export const About: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500">
+            <div className="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-500">
               <Code size={20} />
             </div>
             <h3 className="font-bold text-slate-800">Tentang Aplikasi</h3>
@@ -29,7 +29,7 @@ export const About: React.FC = () => {
 
         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500">
+            <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center text-teal-500">
               <User size={20} />
             </div>
             <h3 className="font-bold text-slate-800">Pengembang</h3>
