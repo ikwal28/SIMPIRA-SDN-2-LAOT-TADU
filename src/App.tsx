@@ -205,10 +205,14 @@ export default function App() {
     try {
       const res = await api.login(username, password);
       if (res.success) {
-        setUser(res.user);
-        sessionStorage.setItem('simpira_user', JSON.stringify(res.user));
+        // Security: Remove password from user object before storing in session
+        const safeUser = { ...res.user };
+        delete safeUser.password;
+        
+        setUser(safeUser);
+        sessionStorage.setItem('simpira_user', JSON.stringify(safeUser));
         Swal.fire({
-          title: `Selamat Datang, ${res.user.nama || res.user.Nama || 'User'}!`,
+          title: `Selamat Datang, ${safeUser.nama || safeUser.Nama || 'User'}!`,
           text: 'Login berhasil',
           icon: 'success',
           timer: 2000,

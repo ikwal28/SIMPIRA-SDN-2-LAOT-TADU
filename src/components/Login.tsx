@@ -85,6 +85,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <input 
                   type="text" 
                   required
+                  autoComplete="username"
                   placeholder="Masukkan username anda"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                   value={username}
@@ -100,6 +101,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <input 
                   type="password" 
                   required
+                  autoComplete="current-password"
                   placeholder="Masukkan password anda"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                   value={password}
