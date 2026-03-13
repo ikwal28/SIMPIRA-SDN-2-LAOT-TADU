@@ -195,6 +195,10 @@ export default function App() {
 
       await Promise.all(promises);
     } catch (error) {
+      if (error instanceof Error && error.message === 'SESSION_EXPIRED') {
+        // Session expired is handled by the event listener, no need to log
+        return;
+      }
       console.error('Fetch Data Error:', error);
     } finally {
       setIsLoading(false);
@@ -243,6 +247,9 @@ export default function App() {
         Swal.fire('Gagal', res.error, 'error');
       }
     } catch (error) {
+      if (error instanceof Error && error.message === 'SESSION_EXPIRED') {
+        return;
+      }
       Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
     } finally {
       setIsLoading(false);

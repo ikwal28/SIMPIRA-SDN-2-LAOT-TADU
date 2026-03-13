@@ -46,6 +46,10 @@ async function request(action: string, payload: any = {}) {
     
     return result;
   } catch (error) {
+    if (error instanceof Error && error.message === 'SESSION_EXPIRED') {
+      // Don't log session expiration as an error
+      throw error;
+    }
     console.error('API Request Error:', error);
     throw error;
   }
