@@ -81,12 +81,19 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
   const handlePrintRekapan = () => {
     const headers = ['No Rekening', 'Nama', type === 'SISWA' ? 'Kelas' : 'Jabatan', 'Saldo'];
     
-    const body = safeUsers.map(u => [
-      String(u?.noRekening || u?.['No Rekening'] || '-'),
-      String(u?.nama || (u as any)?.Nama || '-'),
-      String(u?.kelas || (u as any)?.Kelas || u?.jabatan || (u as any)?.Jabatan || '-'),
-      String(formatCurrency(Number(u?.saldo || (u as any)?.Saldo || 0)))
-    ]);
+    let totalSaldo = 0;
+    const body = safeUsers.map(u => {
+      const saldo = Number(u?.saldo || (u as any)?.Saldo || 0);
+      totalSaldo += saldo;
+      return [
+        String(u?.noRekening || u?.['No Rekening'] || '-'),
+        String(u?.nama || (u as any)?.Nama || '-'),
+        String(u?.kelas || (u as any)?.Kelas || u?.jabatan || (u as any)?.Jabatan || '-'),
+        String(formatCurrency(saldo))
+      ];
+    });
+
+    body.push(['', '', 'TOTAL KESELURUHAN', String(formatCurrency(totalSaldo))]);
 
     generatePDF(`Rekapan Saldo ${type}`, headers, body, `Rekapan_${type}`);
   };
@@ -106,14 +113,48 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
 
     const headers = ['No Rekening', 'Nama', 'Kelas', 'Saldo'];
     
-    const body = classUsers.map(u => [
-      String(u?.noRekening || u?.['No Rekening'] || '-'),
-      String(u?.nama || (u as any)?.Nama || '-'),
-      String(u?.kelas || (u as any)?.Kelas || '-'),
-      String(formatCurrency(Number(u?.saldo || (u as any)?.Saldo || 0)))
-    ]);
+    let totalSaldo = 0;
+    const body = classUsers.map(u => {
+      const saldo = Number(u?.saldo || (u as any)?.Saldo || 0);
+      totalSaldo += saldo;
+      return [
+        String(u?.noRekening || u?.['No Rekening'] || '-'),
+        String(u?.nama || (u as any)?.Nama || '-'),
+        String(u?.kelas || (u as any)?.Kelas || '-'),
+        String(formatCurrency(saldo))
+      ];
+    });
+
+    body.push(['', '', 'TOTAL KESELURUHAN', String(formatCurrency(totalSaldo))]);
 
     generatePDF(`Rekapan Saldo Kelas ${selectedClass}`, headers, body, `Rekapan_Kelas_${selectedClass}`);
+  };
+
+  const handlePrintRekapanLulus = () => {
+    const lulusUsers = safeUsers.filter(u => String(u?.status || (u as any)?.Status || '').toUpperCase() === 'LULUS');
+    
+    if (lulusUsers.length === 0) {
+      Swal.fire('Info', 'Tidak ada data siswa dengan status LULUS', 'info');
+      return;
+    }
+
+    const headers = ['No Rekening', 'Nama', 'Kelas', 'Saldo'];
+    
+    let totalSaldo = 0;
+    const body = lulusUsers.map(u => {
+      const saldo = Number(u?.saldo || (u as any)?.Saldo || 0);
+      totalSaldo += saldo;
+      return [
+        String(u?.noRekening || u?.['No Rekening'] || '-'),
+        String(u?.nama || (u as any)?.Nama || '-'),
+        String(u?.kelas || (u as any)?.Kelas || '-'),
+        String(formatCurrency(saldo))
+      ];
+    });
+
+    body.push(['', '', 'TOTAL KESELURUHAN', String(formatCurrency(totalSaldo))]);
+
+    generatePDF(`Rekapan Saldo Siswa Lulus`, headers, body, `Rekapan_Siswa_Lulus`);
   };
 
   return (
@@ -261,7 +302,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                   <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600">
                     <FileText size={20} />
                   </div>
-                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas</h3>
+                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas & Lulus</h3>
                 </div>
 
                 <div className="relative">
@@ -282,13 +323,22 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                 </div>
               </div>
 
-              <button 
-                onClick={handlePrintRekapanKelas}
-                className="w-full mt-6 py-4 bg-amber-500 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all flex items-center justify-center gap-2"
-              >
-                <Printer size={20} />
-                Cetak Rekapan Kelas
-              </button>
+              <div className="space-y-3 mt-6">
+                <button 
+                  onClick={handlePrintRekapanKelas}
+                  className="w-full py-4 bg-amber-500 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <Printer size={20} />
+                  Cetak Rekapan Kelas
+                </button>
+                <button 
+                  onClick={handlePrintRekapanLulus}
+                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <Printer size={20} />
+                  Cetak Rekapan Siswa Lulus
+                </button>
+              </div>
             </div>
           )}
         </div>
