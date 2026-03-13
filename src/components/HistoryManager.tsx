@@ -124,38 +124,40 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Cari No Rekening atau Nama..." 
-            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      {userRole !== 'SISWA' && userRole !== 'GTK' && (
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Cari No Rekening atau Nama..." 
+              className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {isKoran && (
+              <button 
+                onClick={handlePrintRekapan}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
+              >
+                <FileText size={20} />
+                Cetak Rekapan
+              </button>
+            )}
+            {!isKoran && (
+              <button 
+                onClick={handlePrintAll}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
+              >
+                <FileText size={20} />
+                Cetak Laporan
+              </button>
+            )}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {isKoran && (
-            <button 
-              onClick={handlePrintRekapan}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
-            >
-              <FileText size={20} />
-              Cetak Rekapan
-            </button>
-          )}
-          {!isKoran && (
-            <button 
-              onClick={handlePrintAll}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all"
-            >
-              <FileText size={20} />
-              Cetak Laporan
-            </button>
-          )}
-        </div>
-      </div>
+      )}
 
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
