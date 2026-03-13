@@ -25,7 +25,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
   onDeleteAdmin,
   onPromoteClass
 }) => {
-  const canAccessManualForm = ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'].includes(currentRole);
+  const canAccessManualForm = ['SUPERADMIN', 'ADMINSISWA'].includes(currentRole);
   const canAccessAdminManager = currentRole === 'SUPERADMIN';
   const canAccessPromotion = currentRole === 'SUPERADMIN';
 

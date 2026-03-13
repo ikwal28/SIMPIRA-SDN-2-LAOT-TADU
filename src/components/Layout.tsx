@@ -50,7 +50,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
         { id: 'riwayat_gtk', label: 'Riwayat GTK', icon: History, roles: ['SUPERADMIN', 'ADMINGTK'] },
         { id: 'koran_siswa', label: 'Cetak Rekening Siswa', icon: FileText, roles: ['SUPERADMIN', 'ADMINSISWA'] },
         { id: 'koran_gtk', label: 'Cetak Rekening GTK', icon: FileText, roles: ['SUPERADMIN', 'ADMINGTK'] },
-        { id: 'manual_form', label: 'Form Manual Tabungan', icon: FileText, roles: ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'] },
+        { id: 'manual_form', label: 'Form Manual Tabungan', icon: FileText, roles: ['SUPERADMIN', 'ADMINSISWA'] },
       ]
     },
     {
