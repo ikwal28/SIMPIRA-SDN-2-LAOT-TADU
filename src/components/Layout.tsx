@@ -70,10 +70,13 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
       {/* Mobile Header */}
       <div className="md:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border border-white/30 shadow-inner">
-            <span className="text-white font-bold text-lg">
-              {(user.nama || (user as any).Nama || 'U').charAt(0)}
-            </span>
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border border-white/30 shadow-inner overflow-hidden">
+            <img 
+              src={`https://api.dicebear.com/7.x/micah/svg?seed=${encodeURIComponent(user.nama || (user as any).Nama || user.username || 'User')}&backgroundColor=transparent`} 
+              alt="Avatar" 
+              className="w-full h-full object-cover scale-110"
+              referrerPolicy="no-referrer"
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-white/80 font-medium uppercase tracking-wider">Selamat Datang,</span>
@@ -172,8 +175,13 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
                 <p className="text-sm font-bold text-slate-800 leading-none">{user.nama || (user as any).Nama || 'User'}</p>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase mt-1">{role}</p>
               </div>
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold border border-primary/10">
-                {(user.nama || (user as any).Nama || 'U').charAt(0)}
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold border border-primary/10 overflow-hidden">
+                <img 
+                  src={`https://api.dicebear.com/7.x/micah/svg?seed=${encodeURIComponent(user.nama || (user as any).Nama || user.username || 'User')}&backgroundColor=transparent`} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover scale-110"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </div>
             <div className="h-8 w-[1px] bg-slate-100" />
