@@ -31,6 +31,15 @@
             .then(reg => console.log('SW Registered!', reg))
             .catch(err => console.log('SW Registration Failed!', err));
         });
+
+        // Reload the page when the service worker updates
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       }
     </script>
     <script type="module" src="/src/main.tsx"></script>

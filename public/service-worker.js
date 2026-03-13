@@ -1,4 +1,4 @@
-const CACHE_NAME = 'simpira-v1';
+const CACHE_NAME = 'simpira-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -32,29 +32,47 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Strategy: Cache First, then Network
+// Fetch Strategy
 self.addEventListener('fetch', (event) => {
   // Skip cross-origin requests and API calls to avoid breaking backend
   if (!event.request.url.startsWith(self.location.origin) || event.request.url.includes('/api/')) {
     return;
   }
 
+  // Strategy for HTML (Navigation): Network First, fallback to Cache
+  if (event.request.mode === 'navigate' || event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || caches.match('/index.html');
+          });
+        })
+    );
+    return;
+  }
+
+  // Strategy for Assets (JS, CSS, Images): Stale-While-Revalidate
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).then((fetchResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          // Only cache successful GET requests
-          if (event.request.method === 'GET' && fetchResponse.status === 200) {
-            cache.put(event.request, fetchResponse.clone());
-          }
-          return fetchResponse;
-        });
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Ignore fetch errors if offline
       });
-    }).catch(() => {
-      // Fallback to index.html for SPA routing offline
-      if (event.request.mode === 'navigate') {
-        return caches.match('/index.html');
-      }
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
