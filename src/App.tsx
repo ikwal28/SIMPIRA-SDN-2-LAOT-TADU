@@ -127,11 +127,13 @@ export default function App() {
       
       if (['siswa', 'transaksi_siswa', 'koran_siswa', 'pengaturan', 'manual_form'].includes(activeTab) && ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'].includes(user.role)) {
         promises.push(api.getSiswa().then(res => {
-          console.log('Siswa Data:', res);
+          console.log('Siswa Data Response:', res);
           if (Array.isArray(res)) {
             setSiswa(res);
           } else if (res && typeof res === 'object' && Array.isArray((res as any).data)) {
             setSiswa((res as any).data);
+          } else {
+            console.error('Unexpected Siswa Data format:', res);
           }
         }));
       }

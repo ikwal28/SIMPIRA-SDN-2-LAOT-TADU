@@ -104,11 +104,9 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         doc.setFont('helvetica', 'normal');
         doc.text('Kelas', labelX, y);
         doc.text(':', valueX - 5, y);
-        doc.setFont('helvetica', 'bold');
-        doc.text(kelas, valueX, y);
+        doc.text('..................................................', valueX, y);
 
         y += 7;
-        doc.setFont('helvetica', 'normal');
         doc.text('Tahun', labelX, y);
         doc.text(':', valueX - 5, y);
         doc.text('..................................................', valueX, y);
@@ -281,7 +279,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
             </li>
             <li className="flex items-start gap-3 text-xs text-slate-600">
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-none" />
-              <span>Data Nama, No Rekening, dan Kelas akan terisi otomatis.</span>
+              <span>Data Nama dan No Rekening akan terisi otomatis. Kelas dapat diisi manual.</span>
             </li>
             <li className="flex items-start gap-3 text-xs text-slate-600">
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-none" />
