@@ -66,7 +66,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
   const filteredMenu = allMenuItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-slate-50 overflow-hidden">
+    <div className="h-screen flex flex-col md:flex-row bg-gradient-to-br from-emerald-50/40 via-slate-50 to-sky-50/40 overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
         <div className="flex items-center gap-3">
