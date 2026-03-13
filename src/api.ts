@@ -19,39 +19,18 @@ async function request(action: string, payload: any = {}) {
     payload._sessionToken = user.sessionToken;
   }
 
-  // Use POST for login to keep credentials out of URL/logs
-  // Use GET for others to maintain compatibility with GAS redirect behavior for simple reads
-  const isLogin = action === 'login';
-  const method = isLogin ? 'POST' : 'GET';
-  
-  let url = SCRIPT_URL;
-  let options: RequestInit = {
-    method,
-    mode: 'cors',
-    cache: 'no-cache'
-  };
-
-  if (method === 'GET') {
-    const urlObj = new URL(SCRIPT_URL);
-    urlObj.searchParams.append('action', action);
-    urlObj.searchParams.append('payload', JSON.stringify(payload));
-    url = urlObj.toString();
-  } else {
-    // For POST (Login)
-    // GAS doPost receives data in e.postData.contents
-    // We send as text/plain to avoid CORS preflight (no-cors or simple request)
-    // But since we need the response, we use cors mode with simple content type
-    const formData = new URLSearchParams();
-    formData.append('action', action);
-    formData.append('payload', JSON.stringify(payload));
-    options.body = formData;
-    options.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-  }
+  // Use GET for all requests to ensure maximum compatibility with Google Apps Script Web Apps.
+  // GAS handles GET requests more reliably across different browser environments and CORS settings.
+  const url = new URL(SCRIPT_URL);
+  url.searchParams.append('action', action);
+  url.searchParams.append('payload', JSON.stringify(payload));
 
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache'
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
