@@ -138,10 +138,13 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
             })}
           </div>
           
-          <div className="p-4 border-t border-slate-100 md:hidden">
+          <div className="p-4 border-t border-slate-100">
+            <div className="text-[10px] font-bold text-red-500 text-center">
+              APP VERSION: 1.0.1 - DATE PICKER ADDED
+            </div>
             <button 
               onClick={onLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
+              className="w-full md:hidden flex items-center gap-3 px-4 py-3 mt-2 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
             >
               <LogOut size={18} />
               Keluar
