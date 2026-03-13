@@ -66,9 +66,9 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
   const filteredMenu = allMenuItems.filter(item => item.roles.includes(role));
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-gradient-to-br from-teal-50/40 via-slate-100 to-orange-50/40 overflow-hidden">
+    <div className="h-screen flex flex-col lg:flex-row bg-gradient-to-br from-teal-50/40 via-slate-100 to-orange-50/40 overflow-hidden">
       {/* Mobile Header */}
-      <div className="md:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
+      <div className="lg:hidden flex-none flex items-center justify-between p-4 bg-primary text-white z-50 shadow-md">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border border-white/30 shadow-inner overflow-hidden">
             <img 
@@ -80,7 +80,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-white/80 font-medium uppercase tracking-wider">Selamat Datang,</span>
-            <span className="font-bold text-sm truncate max-w-[160px]">
+            <span className="font-bold text-sm truncate max-w-[160px] sm:max-w-xs">
               {user.nama || (user as any).Nama || 'User'}
             </span>
           </div>
@@ -97,7 +97,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-none",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex-none",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-full flex flex-col">
@@ -144,7 +144,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
             })}
           </div>
           
-          <div className="p-4 border-t border-slate-100 md:hidden">
+          <div className="p-4 border-t border-slate-100 lg:hidden">
             <button 
               onClick={onLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all"
@@ -158,7 +158,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <header className="hidden md:flex flex-none items-center justify-between px-8 py-3 bg-white border-b border-slate-100">
+        <header className="hidden lg:flex flex-none items-center justify-between px-8 py-3 bg-white border-b border-slate-100">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-bold text-slate-800 capitalize">
               {activeTab.replace('_', ' ')}
@@ -195,12 +195,12 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 custom-scrollbar">
           {children}
         </div>
 
         {/* Mobile Bottom Nav */}
-        <div className="md:hidden flex-none bg-white border-t border-slate-100 px-2 py-2 flex justify-around items-center z-50">
+        <div className="lg:hidden flex-none bg-white border-t border-slate-100 px-2 py-2 flex justify-around items-center z-50">
           {(() => {
             const items = filteredMenu.filter(m => m.id !== 'about').slice(0, 4);
             const about = allMenuItems.find(m => m.id === 'about');
@@ -226,7 +226,7 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
       {/* Overlay for mobile sidebar */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/50 z-30 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-slate-900/50 z-30 lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

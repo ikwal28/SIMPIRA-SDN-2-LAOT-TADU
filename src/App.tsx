@@ -113,9 +113,14 @@ export default function App() {
             setStats(res.stats);
             if (res.userInfo) {
               // Update user state with latest balance
-              const updatedUser = { ...user, saldo: res.userInfo.Saldo || res.userInfo.saldo || 0, status: res.userInfo.Status || res.userInfo.status || 'AKTIF' };
-              setUser(updatedUser);
-              sessionStorage.setItem('simpira_user', JSON.stringify(updatedUser));
+              const newSaldo = Number(res.userInfo.Saldo || res.userInfo.saldo || 0);
+              const newStatus = String(res.userInfo.Status || res.userInfo.status || 'AKTIF');
+              
+              if (user.saldo !== newSaldo || user.status !== newStatus) {
+                const updatedUser = { ...user, saldo: newSaldo, status: newStatus };
+                setUser(updatedUser);
+                sessionStorage.setItem('simpira_user', JSON.stringify(updatedUser));
+              }
             }
           }
         }));
@@ -236,10 +241,27 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    sessionStorage.removeItem('simpira_user');
-    setActiveTab('dashboard');
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'TERIMAKASIH TELAH MENGGUNAKAN SIMPIRA MENABUNG',
+      text: 'Apakah Anda Yakin Ingin Keluar?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Tidak',
+      customClass: {
+        title: 'text-lg md:text-xl font-bold',
+        htmlContainer: 'text-sm md:text-base'
+      }
+    });
+
+    if (result.isConfirmed) {
+      setUser(null);
+      sessionStorage.removeItem('simpira_user');
+      setActiveTab('dashboard');
+    }
   };
 
   const handleAction = async (action: () => Promise<any>, successMsg: string) => {
