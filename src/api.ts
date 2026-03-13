@@ -14,7 +14,7 @@ async function request(action: string, payload: any = {}) {
   const userStr = sessionStorage.getItem('simpira_user');
   if (userStr && action !== 'login') {
     const user = JSON.parse(userStr);
-    payload._authUser = user.username || user.noRekening || user['No Rekening'] || '';
+    payload._authUser = user.username || user.Username || user.noRekening || user['No Rekening'] || '';
     payload._authRole = user.role;
     payload._sessionToken = user.sessionToken;
   }
@@ -24,12 +24,13 @@ async function request(action: string, payload: any = {}) {
   const url = new URL(SCRIPT_URL);
   url.searchParams.append('action', action);
   url.searchParams.append('payload', JSON.stringify(payload));
+  url.searchParams.append('t', Date.now().toString()); // Prevent caching
 
   try {
     const response = await fetch(url.toString(), {
       method: 'GET',
       mode: 'cors',
-      cache: 'no-cache'
+      cache: 'no-store' // Use no-store to strictly prevent caching
     });
 
     if (!response.ok) {

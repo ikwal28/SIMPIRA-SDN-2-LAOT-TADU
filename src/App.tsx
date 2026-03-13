@@ -107,7 +107,7 @@ export default function App() {
 
       // Always fetch dashboard stats as they are small and often needed
       if (activeTab === 'dashboard') {
-        const identifier = user.username || user.noRekening || (user as any)['No Rekening'] || '';
+        const identifier = user.username || (user as any).Username || user.noRekening || (user as any)['No Rekening'] || '';
         promises.push(api.getDashboard(user.role, identifier).then(res => {
           if (res.success) {
             setStats(res.stats);
@@ -212,6 +212,7 @@ export default function App() {
         // Security: Remove password from user object before storing in session
         const safeUser = { ...res.user };
         delete safeUser.password;
+        delete safeUser.Password;
         
         setUser(safeUser);
         sessionStorage.setItem('simpira_user', JSON.stringify(safeUser));
