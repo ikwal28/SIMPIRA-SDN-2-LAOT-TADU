@@ -83,6 +83,9 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <button onClick={onLogout} className="p-2 bg-red-500/20 text-red-100 rounded-xl hover:bg-red-500/40 transition-colors" title="Keluar">
+            <LogOut size={20} />
+          </button>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
