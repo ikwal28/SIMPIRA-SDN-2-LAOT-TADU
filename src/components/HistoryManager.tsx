@@ -12,9 +12,10 @@ interface HistoryManagerProps {
   users?: User[]; // Added users data
   onDelete: (type: 'SISWA' | 'GTK', kodeTRX: string) => Promise<void>;
   isKoran?: boolean;
+  userRole?: string;
 }
 
-export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, users = [], onDelete, isKoran = false }) => {
+export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, users = [], onDelete, isKoran = false, userRole }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const safeData = Array.isArray(data) ? data : [];
@@ -166,7 +167,9 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Jenis</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Nominal</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Petugas</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                {userRole !== 'SISWA' && userRole !== 'GTK' && (
+                  <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -194,32 +197,34 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
                     {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? '+' : '-'} {formatCurrency(Number(trx?.nominal || (trx as any)?.Nominal || 0))}
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-500 font-medium">{trx?.namaAdmin || (trx as any)?.NamaAdmin || '-'}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      {isKoran ? (
-                        <button 
-                          onClick={() => handlePrintKoran((trx?.noRekening || (trx as any)?.['No Rekening'] || '').toString(), trx?.nama || (trx as any)?.Nama || '')}
-                          className="p-2 text-sky-500 hover:bg-sky-50 rounded-lg transition-colors"
-                          title="Cetak Rekening Koran"
-                        >
-                          <FileText size={18} />
-                        </button>
-                      ) : (
-                        <button 
-                          onClick={() => handleDelete(trx?.kodeTRX || (trx as any)?.KodeTRX || '')}
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Hapus Transaksi"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
+                  {userRole !== 'SISWA' && userRole !== 'GTK' && (
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        {isKoran ? (
+                          <button 
+                            onClick={() => handlePrintKoran((trx?.noRekening || (trx as any)?.['No Rekening'] || '').toString(), trx?.nama || (trx as any)?.Nama || '')}
+                            className="p-2 text-sky-500 hover:bg-sky-50 rounded-lg transition-colors"
+                            title="Cetak Rekening Koran"
+                          >
+                            <FileText size={18} />
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={() => handleDelete(trx?.kodeTRX || (trx as any)?.KodeTRX || '')}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Hapus Transaksi"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
               {filteredData.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
+                  <td colSpan={userRole !== 'SISWA' && userRole !== 'GTK' ? 6 : 5} className="px-6 py-12 text-center text-slate-400 font-medium">
                     Tidak ada riwayat transaksi ditemukan
                   </td>
                 </tr>

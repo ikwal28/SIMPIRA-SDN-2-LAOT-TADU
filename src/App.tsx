@@ -163,14 +163,14 @@ export default function App() {
       }
 
       if (['riwayat_siswa', 'koran_siswa'].includes(activeTab)) {
-        promises.push(api.getTransactions('SISWA', user.role === 'SISWA' ? user.noRekening : undefined).then(res => {
+        promises.push(api.getTransactions('SISWA', user.role === 'SISWA' ? (user.noRekening || (user as any)['No Rekening']) : undefined).then(res => {
           console.log('Trx Siswa Data:', res);
           if (Array.isArray(res)) setTrxSiswa(res);
         }));
       }
 
       if (['riwayat_gtk', 'koran_gtk'].includes(activeTab)) {
-        promises.push(api.getTransactions('GTK', user.role === 'GTK' ? user.noRekening : undefined).then(res => {
+        promises.push(api.getTransactions('GTK', user.role === 'GTK' ? (user.noRekening || (user as any)['No Rekening']) : undefined).then(res => {
           if (Array.isArray(res)) setTrxGTK(res);
         }));
       }
@@ -290,9 +290,9 @@ export default function App() {
           />
         );
       case 'riwayat_siswa':
-        return <HistoryManager type="SISWA" data={trxSiswa} onDelete={(t, id) => handleAction(() => api.deleteTransaction(t, id), 'Transaksi dibatalkan')} />;
+        return <HistoryManager type="SISWA" data={trxSiswa} onDelete={(t, id) => handleAction(() => api.deleteTransaction(t, id), 'Transaksi dibatalkan')} userRole={user.role} />;
       case 'riwayat_gtk':
-        return <HistoryManager type="GTK" data={trxGTK} onDelete={(t, id) => handleAction(() => api.deleteTransaction(t, id), 'Transaksi dibatalkan')} />;
+        return <HistoryManager type="GTK" data={trxGTK} onDelete={(t, id) => handleAction(() => api.deleteTransaction(t, id), 'Transaksi dibatalkan')} userRole={user.role} />;
       case 'koran_siswa':
         return <PrintManager type="SISWA" users={siswa} transactions={trxSiswa} />;
       case 'koran_gtk':
