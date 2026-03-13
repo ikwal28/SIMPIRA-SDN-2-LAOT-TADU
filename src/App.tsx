@@ -309,6 +309,7 @@ export default function App() {
             onUpdateAdmin={(u, d) => handleAction(() => api.updateAdmin(u, d), 'Data admin diperbarui')}
             onDeleteAdmin={(u) => handleAction(() => api.deleteAdmin(u), 'Admin berhasil dihapus')}
             onPromoteClass={() => handleAction(() => api.promoteClass(), 'Kenaikan kelas berhasil diproses')}
+            onDeleteSiswaLulus={() => handleAction(() => api.deleteSiswaLulus(), 'Seluruh data siswa lulus berhasil dihapus')}
           />
         );
       case 'about':

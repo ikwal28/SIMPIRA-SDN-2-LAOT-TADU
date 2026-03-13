@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Search, FileText, User as UserIcon, Printer } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Search, FileText, User as UserIcon, Printer, ChevronDown } from 'lucide-react';
 import { User, Transaction } from '../types';
 import { formatCurrency, generatePDF, cn } from '../utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import Swal from 'sweetalert2';
 
 interface PrintManagerProps {
   type: 'SISWA' | 'GTK';
@@ -15,9 +16,20 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedClass, setSelectedClass] = useState<string>('');
 
   const safeUsers = Array.isArray(users) ? users : [];
   const safeTransactions = Array.isArray(transactions) ? transactions : [];
+
+  const classes = useMemo(() => {
+    if (type !== 'SISWA') return [];
+    const uniqueClasses = new Set<string>();
+    safeUsers.forEach(s => {
+      const className = String(s.kelas || (s as any).Kelas || '');
+      if (className && className !== '' && className !== '-') uniqueClasses.add(className);
+    });
+    return Array.from(uniqueClasses).sort();
+  }, [safeUsers, type]);
 
   const filteredUsers = searchTerm.length > 0 ? safeUsers.filter(u => 
     (u?.nama || (u as any)?.Nama || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -77,6 +89,31 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
     ]);
 
     generatePDF(`Rekapan Saldo ${type}`, headers, body, `Rekapan_${type}`);
+  };
+
+  const handlePrintRekapanKelas = () => {
+    if (!selectedClass) {
+      Swal.fire('Info', 'Silakan pilih kelas terlebih dahulu', 'info');
+      return;
+    }
+
+    const classUsers = safeUsers.filter(u => String(u?.kelas || (u as any)?.Kelas || '') === selectedClass);
+    
+    if (classUsers.length === 0) {
+      Swal.fire('Info', `Tidak ada data siswa untuk kelas ${selectedClass}`, 'info');
+      return;
+    }
+
+    const headers = ['No Rekening', 'Nama', 'Kelas', 'Saldo'];
+    
+    const body = classUsers.map(u => [
+      String(u?.noRekening || u?.['No Rekening'] || '-'),
+      String(u?.nama || (u as any)?.Nama || '-'),
+      String(u?.kelas || (u as any)?.Kelas || '-'),
+      String(formatCurrency(Number(u?.saldo || (u as any)?.Saldo || 0)))
+    ]);
+
+    generatePDF(`Rekapan Saldo Kelas ${selectedClass}`, headers, body, `Rekapan_Kelas_${selectedClass}`);
   };
 
   return (
@@ -188,32 +225,72 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
         </div>
 
         {/* Summary Print Card */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
-                <FileText size={20} />
+        <div className="flex flex-col gap-6">
+          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+                  <FileText size={20} />
+                </div>
+                <h3 className="font-bold text-slate-800">Cetak Rekapan Seluruh {type}</h3>
               </div>
-              <h3 className="font-bold text-slate-800">Cetak Rekapan Seluruh {type}</h3>
+
+              <div className="p-6 bg-secondary/5 border border-secondary/10 rounded-2xl space-y-4">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Fitur ini akan mencetak laporan keuangan yang merangkum data seluruh {type} beserta saldo terakhir mereka dalam satu dokumen PDF.
+                </p>
+                <div className="flex items-center gap-4 text-xs font-bold text-secondary uppercase tracking-widest">
+                  <span>Total Data: {safeUsers.length} Nasabah</span>
+                </div>
+              </div>
             </div>
 
-            <div className="p-6 bg-secondary/5 border border-secondary/10 rounded-2xl space-y-4">
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Fitur ini akan mencetak laporan keuangan yang merangkum data seluruh {type} beserta saldo terakhir mereka dalam satu dokumen PDF.
-              </p>
-              <div className="flex items-center gap-4 text-xs font-bold text-secondary uppercase tracking-widest">
-                <span>Total Data: {safeUsers.length} Nasabah</span>
-              </div>
-            </div>
+            <button 
+              onClick={handlePrintRekapan}
+              className="w-full mt-6 py-4 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all flex items-center justify-center gap-2"
+            >
+              <Printer size={20} />
+              Cetak Rekapan Semua {type}
+            </button>
           </div>
 
-          <button 
-            onClick={handlePrintRekapan}
-            className="w-full mt-6 py-4 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-sky-600 transition-all flex items-center justify-center gap-2"
-          >
-            <Printer size={20} />
-            Cetak Rekapan Semua {type}
-          </button>
+          {type === 'SISWA' && (
+            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600">
+                    <FileText size={20} />
+                  </div>
+                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas</h3>
+                </div>
+
+                <div className="relative">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Kelas</label>
+                  <div className="relative">
+                    <select
+                      value={selectedClass}
+                      onChange={(e) => setSelectedClass(e.target.value)}
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 appearance-none font-bold text-slate-700"
+                    >
+                      <option value="">-- Pilih Kelas --</option>
+                      {classes.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={handlePrintRekapanKelas}
+                className="w-full mt-6 py-4 bg-amber-500 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all flex items-center justify-center gap-2"
+              >
+                <Printer size={20} />
+                Cetak Rekapan Kelas
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

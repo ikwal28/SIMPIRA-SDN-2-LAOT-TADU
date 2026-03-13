@@ -60,6 +60,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         const nama = String(student.nama || (student as any).Nama || '-');
         const noRek = String(student?.['No Rekening'] || student?.noRekening || '-');
         const kelas = String(student.kelas || (student as any).Kelas || '-');
+        const saldo = Number(student.saldo || (student as any).Saldo || 0).toLocaleString('id-ID');
         
         console.log('Processing student:', nama, noRek, kelas);
 
@@ -110,6 +111,12 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         doc.text('Tahun', labelX, y);
         doc.text(':', valueX - 5, y);
         doc.text('..................................................', valueX, y);
+
+        y += 7;
+        doc.text('Saldo Terakhir', labelX, y);
+        doc.text(':', valueX - 5, y);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Rp ${saldo}`, valueX, y);
 
         // Table
         const tableData = [];

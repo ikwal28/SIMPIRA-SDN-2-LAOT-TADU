@@ -80,6 +80,7 @@ function handleAction(action, payload) {
     case 'addAdmin': return withLock(() => addAdmin(payload));
     case 'updateAdmin': return withLock(() => updateData('ADMIN', 'Username', payload.username, payload.data));
     case 'deleteAdmin': return withLock(() => deleteData('ADMIN', 'Username', payload.username));
+    case 'deleteSiswaLulus': return withLock(() => deleteSiswaLulus());
     default: throw new Error('Invalid action: ' + action);
   }
 }
@@ -325,4 +326,74 @@ function addAdmin(data) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('ADMIN');
   sheet.appendRow([data.username, data.password, data.role, data.nama]);
   return { success: true };
+}
+
+function deleteSiswaLulus() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheetSiswa = ss.getSheetByName('SISWA');
+    const sheetTrx = ss.getSheetByName('TRANSAKSI_SISWA');
+    
+    if (!sheetSiswa || !sheetTrx) {
+      return { success: false, error: 'Sheet SISWA atau TRANSAKSI_SISWA tidak ditemukan' };
+    }
+    
+    const dataSiswa = sheetSiswa.getDataRange().getValues();
+    const headersSiswa = dataSiswa[0];
+    
+    const idxNoRek = headersSiswa.indexOf('No Rekening');
+    const idxStatus = headersSiswa.indexOf('Status');
+    
+    if (idxNoRek === -1 || idxStatus === -1) {
+      return { success: false, error: 'Kolom No Rekening atau Status tidak ditemukan di Sheet SISWA' };
+    }
+    
+    const noRekLulus = [];
+    const rowsToDeleteSiswa = [];
+    
+    // Cari baris siswa yang LULUS (loop dari bawah ke atas agar index tidak bergeser saat dihapus)
+    for (let i = dataSiswa.length - 1; i > 0; i--) {
+      const status = String(dataSiswa[i][idxStatus] || '').trim().toUpperCase();
+      if (status === 'LULUS') {
+        noRekLulus.push(String(dataSiswa[i][idxNoRek]));
+        rowsToDeleteSiswa.push(i + 1); // +1 karena index array mulai dari 0, sedangkan baris sheet mulai dari 1
+      }
+    }
+    
+    if (noRekLulus.length === 0) {
+      return { success: true, message: 'Tidak ada siswa dengan status LULUS' };
+    }
+    
+    // 1. Hapus data dari Sheet Siswa
+    rowsToDeleteSiswa.forEach(row => {
+      sheetSiswa.deleteRow(row);
+    });
+    
+    // 2. Hapus riwayat transaksi mereka dari Sheet Transaksi Siswa
+    const dataTrx = sheetTrx.getDataRange().getValues();
+    const headersTrx = dataTrx[0];
+    const idxNoRekTrx = headersTrx.indexOf('No Rekening');
+    
+    if (idxNoRekTrx !== -1) {
+      const rowsToDeleteTrx = [];
+      for (let i = dataTrx.length - 1; i > 0; i--) {
+        const noRek = String(dataTrx[i][idxNoRekTrx]);
+        if (noRekLulus.includes(noRek)) {
+          rowsToDeleteTrx.push(i + 1);
+        }
+      }
+      
+      // Hapus baris transaksi (dari bawah ke atas)
+      rowsToDeleteTrx.forEach(row => {
+        sheetTrx.deleteRow(row);
+      });
+    }
+    
+    return { 
+      success: true, 
+      message: `Berhasil menghapus ${noRekLulus.length} siswa lulus beserta seluruh riwayat transaksinya.` 
+    };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
 }
