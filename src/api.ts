@@ -14,7 +14,8 @@ async function request(action: string, payload: any = {}) {
   const userStr = sessionStorage.getItem('simpira_user');
   if (userStr && action !== 'login') {
     const user = JSON.parse(userStr);
-    payload._authUser = user.username || user.Username || user.noRekening || user['No Rekening'] || '';
+    const authUser = user.username || user.Username || user.noRekening || user['No Rekening'] || user['No. Rekening'] || user.nisn || user.NISN || user.nip || user.NIP || '';
+    payload._authUser = String(authUser);
     payload._authRole = user.role;
     payload._sessionToken = user.sessionToken;
   }

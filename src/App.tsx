@@ -107,7 +107,7 @@ export default function App() {
 
       // Always fetch dashboard stats as they are small and often needed
       if (activeTab === 'dashboard') {
-        const identifier = user.username || (user as any).Username || user.noRekening || (user as any)['No Rekening'] || '';
+        const identifier = String(user.username || (user as any).Username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nisn || (user as any).NISN || (user as any).nip || (user as any).NIP || '');
         promises.push(api.getDashboard(user.role, identifier).then(res => {
           if (res.success) {
             setStats(res.stats);
@@ -163,14 +163,14 @@ export default function App() {
       }
 
       if (['riwayat_siswa', 'koran_siswa'].includes(activeTab)) {
-        promises.push(api.getTransactions('SISWA', user.role === 'SISWA' ? (user.noRekening || (user as any)['No Rekening']) : undefined).then(res => {
+        promises.push(api.getTransactions('SISWA', user.role === 'SISWA' ? String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nisn || (user as any).NISN || '') : undefined).then(res => {
           console.log('Trx Siswa Data:', res);
           if (Array.isArray(res)) setTrxSiswa(res);
         }));
       }
 
       if (['riwayat_gtk', 'koran_gtk'].includes(activeTab)) {
-        promises.push(api.getTransactions('GTK', user.role === 'GTK' ? (user.noRekening || (user as any)['No Rekening']) : undefined).then(res => {
+        promises.push(api.getTransactions('GTK', user.role === 'GTK' ? String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nip || (user as any).NIP || '') : undefined).then(res => {
           if (Array.isArray(res)) setTrxGTK(res);
         }));
       }
@@ -183,12 +183,12 @@ export default function App() {
 
       // Initial load for users
       if (user.role === 'SISWA' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('SISWA', user.noRekening || (user as any)['No Rekening']).then(res => {
+        promises.push(api.getTransactions('SISWA', String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nisn || (user as any).NISN || '')).then(res => {
           if (Array.isArray(res)) setTrxSiswa(res);
         }));
       }
       if (user.role === 'GTK' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('GTK', user.noRekening || (user as any)['No Rekening']).then(res => {
+        promises.push(api.getTransactions('GTK', String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nip || (user as any).NIP || '')).then(res => {
           if (Array.isArray(res)) setTrxGTK(res);
         }));
       }
@@ -213,6 +213,11 @@ export default function App() {
         const safeUser = { ...res.user };
         delete safeUser.password;
         delete safeUser.Password;
+        
+        // Ensure we always have the exact username used to login for session validation
+        if (!safeUser.username && !safeUser.Username) {
+          safeUser.username = username;
+        }
         
         setUser(safeUser);
         sessionStorage.setItem('simpira_user', JSON.stringify(safeUser));
