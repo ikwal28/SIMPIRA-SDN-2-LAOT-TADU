@@ -130,33 +130,6 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
     generatePDF(`Rekapan Saldo Kelas ${selectedClass}`, headers, body, `Rekapan_Kelas_${selectedClass}`);
   };
 
-  const handlePrintRekapanLulus = () => {
-    const lulusUsers = safeUsers.filter(u => String(u?.status || (u as any)?.Status || '').toUpperCase() === 'LULUS');
-    
-    if (lulusUsers.length === 0) {
-      Swal.fire('Info', 'Tidak ada data siswa dengan status LULUS', 'info');
-      return;
-    }
-
-    const headers = ['No Rekening', 'Nama', 'Kelas', 'Saldo'];
-    
-    let totalSaldo = 0;
-    const body = lulusUsers.map(u => {
-      const saldo = Number(u?.saldo || (u as any)?.Saldo || 0);
-      totalSaldo += saldo;
-      return [
-        String(u?.noRekening || u?.['No Rekening'] || '-'),
-        String(u?.nama || (u as any)?.Nama || '-'),
-        String(u?.kelas || (u as any)?.Kelas || '-'),
-        String(formatCurrency(saldo))
-      ];
-    });
-
-    body.push(['', '', 'TOTAL KESELURUHAN', String(formatCurrency(totalSaldo))]);
-
-    generatePDF(`Rekapan Saldo Siswa Lulus`, headers, body, `Rekapan_Siswa_Lulus`);
-  };
-
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header Section */}
@@ -302,7 +275,7 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                   <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600">
                     <FileText size={20} />
                   </div>
-                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas & Lulus</h3>
+                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas</h3>
                 </div>
 
                 <div className="relative">
@@ -330,13 +303,6 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
                 >
                   <Printer size={20} />
                   Cetak Rekapan Kelas
-                </button>
-                <button 
-                  onClick={handlePrintRekapanLulus}
-                  className="w-full py-4 bg-teal-500 text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-2"
-                >
-                  <Printer size={20} />
-                  Cetak Rekapan Siswa Lulus
                 </button>
               </div>
             </div>

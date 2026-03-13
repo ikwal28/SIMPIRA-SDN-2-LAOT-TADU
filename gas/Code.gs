@@ -80,6 +80,7 @@ function handleAction(action, payload) {
     case 'addAdmin': return withLock(() => addAdmin(payload));
     case 'updateAdmin': return withLock(() => updateData('ADMIN', 'Username', payload.username, payload.data));
     case 'deleteAdmin': return withLock(() => deleteData('ADMIN', 'Username', payload.username));
+    case 'promoteClass': return withLock(() => promoteClass());
     case 'deleteSiswaLulus': return withLock(() => deleteSiswaLulus());
     default: throw new Error('Invalid action: ' + action);
   }
@@ -326,6 +327,65 @@ function addAdmin(data) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('ADMIN');
   sheet.appendRow([data.username, data.password, data.role, data.nama]);
   return { success: true };
+}
+
+function promoteClass() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheetSiswa = ss.getSheetByName('SISWA');
+    
+    if (!sheetSiswa) {
+      return { success: false, error: 'Sheet SISWA tidak ditemukan' };
+    }
+    
+    const dataSiswa = sheetSiswa.getDataRange().getValues();
+    if (dataSiswa.length <= 1) {
+      return { success: true, message: 'Tidak ada data siswa untuk diproses' };
+    }
+    
+    const headers = dataSiswa[0];
+    const idxKelas = headers.indexOf('Kelas');
+    const idxStatus = headers.indexOf('Status');
+    
+    if (idxKelas === -1 || idxStatus === -1) {
+      return { success: false, error: 'Kolom Kelas atau Status tidak ditemukan' };
+    }
+    
+    let updatedCount = 0;
+    
+    // Process from row 2 (index 1)
+    for (let i = 1; i < dataSiswa.length; i++) {
+      let currentKelas = String(dataSiswa[i][idxKelas]).trim();
+      let currentStatus = String(dataSiswa[i][idxStatus]).trim().toUpperCase();
+      
+      // Only process active students
+      if (currentStatus !== 'LULUS') {
+        if (currentKelas === '1') {
+          sheetSiswa.getRange(i + 1, idxKelas + 1).setValue('2');
+          updatedCount++;
+        } else if (currentKelas === '2') {
+          sheetSiswa.getRange(i + 1, idxKelas + 1).setValue('3');
+          updatedCount++;
+        } else if (currentKelas === '3') {
+          sheetSiswa.getRange(i + 1, idxKelas + 1).setValue('4');
+          updatedCount++;
+        } else if (currentKelas === '4') {
+          sheetSiswa.getRange(i + 1, idxKelas + 1).setValue('5');
+          updatedCount++;
+        } else if (currentKelas === '5') {
+          sheetSiswa.getRange(i + 1, idxKelas + 1).setValue('6');
+          updatedCount++;
+        } else if (currentKelas === '6') {
+          sheetSiswa.getRange(i + 1, idxStatus + 1).setValue('LULUS');
+          updatedCount++;
+        }
+      }
+    }
+    
+    return { success: true, message: `Berhasil memproses kenaikan kelas untuk ${updatedCount} siswa.` };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
 }
 
 function deleteSiswaLulus() {

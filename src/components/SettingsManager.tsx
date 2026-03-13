@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Trash2, GraduationCap } from 'lucide-react';
+import { Shield, GraduationCap } from 'lucide-react';
 import { User, Role } from '../types';
 import { cn } from '../utils';
 import { AdminManager } from './AdminManager';
-import { DeleteLulusManager } from './DeleteLulusManager';
-import { ClassPromotionManager } from './ClassPromotionManager';
+import { GraduationManager } from './GraduationManager';
 
 interface SettingsManagerProps {
   admins: User[];
@@ -27,26 +26,25 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
   onPromoteClass,
   onDeleteSiswaLulus
 }) => {
-  const canAccessDeleteLulus = ['SUPERADMIN', 'ADMINSISWA'].includes(currentRole);
+  const canAccessGraduation = ['SUPERADMIN', 'ADMINSISWA'].includes(currentRole);
   const canAccessAdminManager = currentRole === 'SUPERADMIN';
-  const canAccessPromotion = currentRole === 'SUPERADMIN';
 
-  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'delete_lulus' | 'promotion'>(
-    canAccessAdminManager ? 'admin' : 'delete_lulus'
+  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'graduation'>(
+    canAccessAdminManager ? 'admin' : 'graduation'
   );
 
   // Sync tab if role changes or initial load
   useEffect(() => {
-    if (!canAccessAdminManager && canAccessDeleteLulus) {
-      setActiveSubTab('delete_lulus');
-    } else if (canAccessAdminManager && !canAccessDeleteLulus) {
+    if (!canAccessAdminManager && canAccessGraduation) {
+      setActiveSubTab('graduation');
+    } else if (canAccessAdminManager && !canAccessGraduation) {
       setActiveSubTab('admin');
     }
-  }, [canAccessAdminManager, canAccessDeleteLulus]);
+  }, [canAccessAdminManager, canAccessGraduation]);
 
   return (
     <div className="h-full flex flex-col space-y-6">
-      {(canAccessAdminManager || canAccessDeleteLulus) ? (
+      {(canAccessAdminManager || canAccessGraduation) ? (
         <>
           <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
             {canAccessAdminManager && (
@@ -63,32 +61,18 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                 Manajemen Admin
               </button>
             )}
-            {canAccessDeleteLulus && (
+            {canAccessGraduation && (
               <button
-                onClick={() => setActiveSubTab('delete_lulus')}
+                onClick={() => setActiveSubTab('graduation')}
                 className={cn(
                   "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
-                  activeSubTab === 'delete_lulus' 
-                    ? "bg-white text-red-600 shadow-sm" 
-                    : "text-slate-500 hover:text-red-500"
-                )}
-              >
-                <Trash2 size={18} />
-                Hapus Siswa Lulus
-              </button>
-            )}
-            {canAccessPromotion && (
-              <button
-                onClick={() => setActiveSubTab('promotion')}
-                className={cn(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
-                  activeSubTab === 'promotion' 
+                  activeSubTab === 'graduation' 
                     ? "bg-white text-primary shadow-sm" 
                     : "text-slate-500 hover:text-slate-700"
                 )}
               >
                 <GraduationCap size={18} />
-                Kenaikan Kelas
+                Kenaikan & Kelulusan
               </button>
             )}
           </div>
@@ -103,11 +87,12 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                 onDelete={onDeleteAdmin}
               />
             )}
-            {activeSubTab === 'delete_lulus' && canAccessDeleteLulus && (
-              <DeleteLulusManager siswa={siswa} onDeleteLulus={onDeleteSiswaLulus} />
-            )}
-            {activeSubTab === 'promotion' && canAccessPromotion && (
-              <ClassPromotionManager onPromote={onPromoteClass} />
+            {activeSubTab === 'graduation' && canAccessGraduation && (
+              <GraduationManager 
+                siswa={siswa} 
+                onPromote={onPromoteClass} 
+                onDeleteLulus={onDeleteSiswaLulus} 
+              />
             )}
           </div>
         </>
