@@ -243,18 +243,25 @@ export default function App() {
 
   const handleLogout = async () => {
     const result = await Swal.fire({
-      title: 'TERIMAKASIH TELAH MENGGUNAKAN SIMPIRA MENABUNG',
+      title: 'TERIMAKASIH<br/>TELAH MENGGUNAKAN<br/>SIMPIRA MENABUNG',
       text: 'Apakah Anda Yakin Ingin Keluar?',
       icon: 'question',
+      iconColor: '#0d9488',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#64748b',
       confirmButtonText: 'Ya',
       cancelButtonText: 'Tidak',
+      width: window.innerWidth < 640 ? '260px' : '400px',
       customClass: {
-        title: 'text-lg md:text-xl font-bold',
-        htmlContainer: 'text-sm md:text-base'
-      }
+        popup: 'rounded-[1.5rem] p-2 sm:p-6',
+        title: 'text-[13px] sm:text-lg font-bold px-2 pt-2 leading-tight text-teal-800',
+        htmlContainer: 'text-[12px] sm:text-base mt-2 text-gray-600',
+        confirmButton: 'text-[11px] sm:text-sm px-4 py-2 rounded-lg font-bold',
+        cancelButton: 'text-[11px] sm:text-sm px-4 py-2 rounded-lg font-bold',
+        actions: 'mt-2 sm:mt-4'
+      },
+      buttonsStyling: true
     });
 
     if (result.isConfirmed) {
