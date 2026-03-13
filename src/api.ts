@@ -83,4 +83,5 @@ export const api = {
   updateAdmin: (username: string, data: Partial<User>) => request('updateAdmin', { username, data }),
   addAdmin: (data: Partial<User>) => request('addAdmin', data),
   deleteAdmin: (username: string) => request('deleteAdmin', { username }),
+  promoteClass: () => request('promoteClass'),
 };

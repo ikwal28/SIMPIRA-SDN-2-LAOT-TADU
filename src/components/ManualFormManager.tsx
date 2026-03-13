@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { FileText, Printer, Search, ChevronDown } from 'lucide-react';
 import { User } from '../types';
 import { cn } from '../utils';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Swal from 'sweetalert2';
 
@@ -18,8 +18,8 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
   const classes = useMemo(() => {
     const uniqueClasses = new Set<string>();
     siswa.forEach(s => {
-      const className = s.kelas || (s as any).Kelas;
-      if (className) uniqueClasses.add(className);
+      const className = String(s.kelas || (s as any).Kelas || '');
+      if (className && className !== '' && className !== '-') uniqueClasses.add(className);
     });
     return Array.from(uniqueClasses).sort();
   }, [siswa]);
@@ -33,7 +33,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         Swal.fire('Info', 'Silakan pilih kelas terlebih dahulu', 'info');
         return;
       }
-      targetSiswa = siswa.filter(s => (s.kelas || (s as any).Kelas) === selectedClass);
+      targetSiswa = siswa.filter(s => String(s.kelas || (s as any).Kelas || '') === selectedClass);
     }
 
     if (targetSiswa.length === 0) {
@@ -42,6 +42,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
     }
 
     setIsGenerating(true);
+    console.log('Generating PDF for', targetSiswa.length, 'students');
     try {
       const doc = new jsPDF({
         orientation: 'portrait',
@@ -49,14 +50,18 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         format: 'a4'
       });
 
+      if (!doc) throw new Error('Failed to initialize jsPDF');
+
       targetSiswa.forEach((student, index) => {
         if (index > 0) {
           doc.addPage();
         }
 
-        const nama = student.nama || (student as any).Nama || '-';
-        const noRek = student.noRekening || (student as any)['No Rekening'] || '-';
-        const kelas = student.kelas || (student as any).Kelas || '-';
+        const nama = String(student.nama || (student as any).Nama || '-');
+        const noRek = String(student?.['No Rekening'] || student?.noRekening || '-');
+        const kelas = String(student.kelas || (student as any).Kelas || '-');
+        
+        console.log('Processing student:', nama, noRek, kelas);
 
         // Header
         doc.setFontSize(14);
@@ -156,9 +161,13 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
 
       const pdfBlob = doc.output('blob');
       const url = URL.createObjectURL(pdfBlob);
-      window.open(url, '_blank');
+      const win = window.open(url, '_blank');
       
-      Swal.fire('Berhasil', 'PDF berhasil dibuat', 'success');
+      if (!win) {
+        Swal.fire('Perhatian', 'PDF berhasil dibuat tetapi diblokir oleh browser. Silakan izinkan pop-up untuk situs ini.', 'warning');
+      } else {
+        Swal.fire('Berhasil', 'PDF berhasil dibuat dan dibuka di tab baru', 'success');
+      }
     } catch (error) {
       console.error('PDF Generation Error:', error);
       Swal.fire('Error', 'Gagal membuat PDF', 'error');
@@ -176,6 +185,16 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
         <div>
           <h3 className="text-xl font-bold text-slate-800">Form Manual Tabungan</h3>
           <p className="text-sm text-slate-500">Cetak formulir tabungan manual untuk arsip sekolah</p>
+          {siswa.length === 0 && (
+            <p className="text-xs text-red-500 font-bold mt-1 animate-pulse">
+              ⚠️ Data siswa belum dimuat. Silakan tunggu atau segarkan halaman.
+            </p>
+          )}
+          {siswa.length > 0 && (
+            <p className="text-[10px] text-emerald-600 font-bold mt-1 uppercase tracking-wider">
+              ✓ {siswa.length} Data Siswa Siap Cetak
+            </p>
+          )}
         </div>
       </div>
 

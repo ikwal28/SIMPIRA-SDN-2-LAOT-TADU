@@ -128,14 +128,22 @@ export default function App() {
       if (['siswa', 'transaksi_siswa', 'koran_siswa', 'pengaturan', 'manual_form'].includes(activeTab) && ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'].includes(user.role)) {
         promises.push(api.getSiswa().then(res => {
           console.log('Siswa Data:', res);
-          if (Array.isArray(res)) setSiswa(res);
+          if (Array.isArray(res)) {
+            setSiswa(res);
+          } else if (res && typeof res === 'object' && Array.isArray((res as any).data)) {
+            setSiswa((res as any).data);
+          }
         }));
       }
 
       if (['gtk', 'transaksi_gtk', 'koran_gtk'].includes(activeTab) && ['SUPERADMIN', 'ADMINGTK'].includes(user.role)) {
         promises.push(api.getGTK().then(res => {
           console.log('GTK Data:', res);
-          if (Array.isArray(res)) setGTK(res);
+          if (Array.isArray(res)) {
+            setGTK(res);
+          } else if (res && typeof res === 'object' && Array.isArray((res as any).data)) {
+            setGTK((res as any).data);
+          }
         }));
       }
 
@@ -285,6 +293,7 @@ export default function App() {
             onAddAdmin={(d) => handleAction(() => api.addAdmin(d), 'Admin baru ditambahkan')}
             onUpdateAdmin={(u, d) => handleAction(() => api.updateAdmin(u, d), 'Data admin diperbarui')}
             onDeleteAdmin={(u) => handleAction(() => api.deleteAdmin(u), 'Admin berhasil dihapus')}
+            onPromoteClass={() => handleAction(() => api.promoteClass(), 'Kenaikan kelas berhasil diproses')}
           />
         );
       case 'about':

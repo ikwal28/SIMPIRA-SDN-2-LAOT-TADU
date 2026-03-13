@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, FileText } from 'lucide-react';
+import { Shield, FileText, GraduationCap } from 'lucide-react';
 import { User, Role } from '../types';
 import { cn } from '../utils';
 import { AdminManager } from './AdminManager';
 import { ManualFormManager } from './ManualFormManager';
+import { ClassPromotionManager } from './ClassPromotionManager';
 
 interface SettingsManagerProps {
   admins: User[];
@@ -12,6 +13,7 @@ interface SettingsManagerProps {
   onAddAdmin: (data: Partial<User>) => Promise<void>;
   onUpdateAdmin: (username: string, data: Partial<User>) => Promise<void>;
   onDeleteAdmin: (username: string) => Promise<void>;
+  onPromoteClass: () => Promise<void>;
 }
 
 export const SettingsManager: React.FC<SettingsManagerProps> = ({ 
@@ -20,12 +22,14 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
   currentRole, 
   onAddAdmin, 
   onUpdateAdmin, 
-  onDeleteAdmin 
+  onDeleteAdmin,
+  onPromoteClass
 }) => {
   const canAccessManualForm = ['SUPERADMIN', 'ADMINSISWA', 'ADMINGTK'].includes(currentRole);
   const canAccessAdminManager = currentRole === 'SUPERADMIN';
+  const canAccessPromotion = currentRole === 'SUPERADMIN';
 
-  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'manual_form'>(
+  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'manual_form' | 'promotion'>(
     canAccessAdminManager ? 'admin' : 'manual_form'
   );
 
@@ -71,6 +75,20 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                 Form Manual Tabungan
               </button>
             )}
+            {canAccessPromotion && (
+              <button
+                onClick={() => setActiveSubTab('promotion')}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                  activeSubTab === 'promotion' 
+                    ? "bg-white text-primary shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                <GraduationCap size={18} />
+                Kenaikan Kelas
+              </button>
+            )}
           </div>
 
           <div className="flex-1">
@@ -85,6 +103,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
             )}
             {activeSubTab === 'manual_form' && canAccessManualForm && (
               <ManualFormManager siswa={siswa} />
+            )}
+            {activeSubTab === 'promotion' && canAccessPromotion && (
+              <ClassPromotionManager onPromote={onPromoteClass} />
             )}
           </div>
         </>

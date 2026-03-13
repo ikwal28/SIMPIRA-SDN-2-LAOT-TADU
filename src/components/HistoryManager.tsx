@@ -66,10 +66,10 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
         console.error('Date format error:', e);
       }
       return [
-        formattedDate,
-        t?.kodeTRX || (t as any)?.KodeTRX || '-',
-        t?.jenis || (t as any)?.Jenis || '-',
-        formatCurrency(Number(t?.nominal || (t as any)?.Nominal || 0))
+        String(formattedDate),
+        String(t?.kodeTRX || (t as any)?.KodeTRX || '-'),
+        String(t?.jenis || (t as any)?.Jenis || '-'),
+        String(formatCurrency(Number(t?.nominal || (t as any)?.Nominal || 0)))
       ];
     });
     
@@ -87,11 +87,11 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
         console.error('Date format error:', e);
       }
       return [
-        formattedDate,
-        t?.nama || (t as any)?.Nama || '-',
-        t?.noRekening || (t as any)?.['No Rekening'] || '-',
-        t?.jenis || (t as any)?.Jenis || '-',
-        formatCurrency(Number(t?.nominal || (t as any)?.Nominal || 0))
+        String(formattedDate),
+        String(t?.nama || (t as any)?.Nama || '-'),
+        String(t?.noRekening || (t as any)?.['No Rekening'] || '-'),
+        String(t?.jenis || (t as any)?.Jenis || '-'),
+        String(formatCurrency(Number(t?.nominal || (t as any)?.Nominal || 0)))
       ];
     });
     
@@ -112,10 +112,10 @@ export const HistoryManager: React.FC<HistoryManagerProps> = ({ type, data, user
     
     // We need the users data to get the final balance
     const body = users.map(u => [
-      u?.noRekening || u?.['No Rekening'] || '-',
-      u?.nama || (u as any)?.Nama || '-',
-      u?.kelas || (u as any)?.Kelas || u?.jabatan || (u as any)?.Jabatan || '-',
-      formatCurrency(Number(u?.saldo || (u as any)?.Saldo || 0))
+      String(u?.noRekening || u?.['No Rekening'] || '-'),
+      String(u?.nama || (u as any)?.Nama || '-'),
+      String(u?.kelas || (u as any)?.Kelas || u?.jabatan || (u as any)?.Jabatan || '-'),
+      String(formatCurrency(Number(u?.saldo || (u as any)?.Saldo || 0)))
     ]);
 
     generatePDF(`Rekapan Saldo ${type}`, headers, body, `Rekapan_${type}`);
