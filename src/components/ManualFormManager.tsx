@@ -120,10 +120,10 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
 
         // Table
         const tableData = [];
-        for (let i = 1; i <= 30; i++) {
+        for (let i = 1; i <= 25; i++) {
           tableData.push([
             i.toString(), '', '', // Left column
-            (i + 30).toString(), '', '' // Right column
+            (i + 25).toString(), '', '' // Right column
           ]);
         }
 
@@ -290,7 +290,7 @@ export const ManualFormManager: React.FC<ManualFormManagerProps> = ({ siswa }) =
             </li>
             <li className="flex items-start gap-3 text-xs text-slate-600">
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-none" />
-              <span>Tabel berisi 60 baris transaksi (30 baris x 2 kolom).</span>
+              <span>Tabel berisi 50 baris transaksi (25 baris x 2 kolom).</span>
             </li>
             <li className="flex items-start gap-3 text-xs text-slate-600">
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-none" />

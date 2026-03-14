@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, GraduationCap } from 'lucide-react';
+import { Shield, GraduationCap, CreditCard } from 'lucide-react';
 import { User, Role } from '../types';
 import { cn } from '../utils';
 import { AdminManager } from './AdminManager';
 import { GraduationManager } from './GraduationManager';
+import { StudentCardManager } from './StudentCardManager';
 
 interface SettingsManagerProps {
   admins: User[];
@@ -28,25 +29,28 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
 }) => {
   const canAccessGraduation = ['SUPERADMIN', 'ADMINSISWA'].includes(currentRole);
   const canAccessAdminManager = currentRole === 'SUPERADMIN';
+  const canAccessStudentCard = ['SUPERADMIN', 'ADMINSISWA'].includes(currentRole);
 
-  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'graduation'>(
-    canAccessAdminManager ? 'admin' : 'graduation'
+  const [activeSubTab, setActiveSubTab] = useState<'admin' | 'graduation' | 'student_card'>(
+    canAccessAdminManager ? 'admin' : (canAccessStudentCard ? 'student_card' : 'graduation')
   );
 
   // Sync tab if role changes or initial load
   useEffect(() => {
-    if (!canAccessAdminManager && canAccessGraduation) {
+    if (!canAccessAdminManager && canAccessStudentCard) {
+      setActiveSubTab('student_card');
+    } else if (!canAccessAdminManager && !canAccessStudentCard && canAccessGraduation) {
       setActiveSubTab('graduation');
-    } else if (canAccessAdminManager && !canAccessGraduation) {
+    } else if (canAccessAdminManager) {
       setActiveSubTab('admin');
     }
-  }, [canAccessAdminManager, canAccessGraduation]);
+  }, [canAccessAdminManager, canAccessGraduation, canAccessStudentCard]);
 
   return (
     <div className="h-full flex flex-col space-y-6">
-      {(canAccessAdminManager || canAccessGraduation) ? (
+      {(canAccessAdminManager || canAccessGraduation || canAccessStudentCard) ? (
         <>
-          <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
+          <div className="flex flex-wrap items-center gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
             {canAccessAdminManager && (
               <button
                 onClick={() => setActiveSubTab('admin')}
@@ -59,6 +63,20 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
               >
                 <Shield size={18} />
                 Manajemen Admin
+              </button>
+            )}
+            {canAccessStudentCard && (
+              <button
+                onClick={() => setActiveSubTab('student_card')}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                  activeSubTab === 'student_card' 
+                    ? "bg-white text-primary shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                <CreditCard size={18} />
+                Kartu Rekening
               </button>
             )}
             {canAccessGraduation && (
@@ -86,6 +104,9 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                 onUpdate={onUpdateAdmin}
                 onDelete={onDeleteAdmin}
               />
+            )}
+            {activeSubTab === 'student_card' && canAccessStudentCard && (
+              <StudentCardManager siswa={siswa} />
             )}
             {activeSubTab === 'graduation' && canAccessGraduation && (
               <GraduationManager 
