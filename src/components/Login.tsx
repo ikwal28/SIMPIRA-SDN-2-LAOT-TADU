@@ -3,6 +3,7 @@ import { LogIn, Shield, User, Lock, Loader2, Download } from 'lucide-react';
 import { cn } from '../utils';
 import Swal from 'sweetalert2';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { FOOTER_TEXT } from '../constants';
 
 interface LoginProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -77,34 +78,34 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <p className="text-slate-400 font-medium">SD Negeri 2 Laot Tadu</p>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-200/50 border border-white animate-in slide-in-from-bottom-8 duration-700">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Username / No Rekening</label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-200/50 border border-white/50 animate-in slide-in-from-bottom-8 duration-700">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username / No Rekening</label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" size={18} />
                 <input 
                   type="text" 
                   required
                   autoComplete="username"
                   placeholder="Masukkan username anda"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold text-slate-700 text-sm"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors" size={18} />
                 <input 
                   type="password" 
                   required
                   autoComplete="current-password"
                   placeholder="Masukkan password anda"
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-bold text-slate-700 text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -114,13 +115,13 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg shadow-xl shadow-primary/30 hover:bg-teal-600 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+              className="w-full py-3.5 bg-primary text-white rounded-2xl font-black text-base shadow-xl shadow-primary/30 hover:bg-teal-600 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2"
             >
               {isLoading ? (
-                <Loader2 className="animate-spin" size={24} />
+                <Loader2 className="animate-spin" size={20} />
               ) : (
                 <>
-                  <LogIn size={24} />
+                  <LogIn size={20} />
                   Masuk Sekarang
                 </>
               )}
@@ -150,7 +151,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
         <div className="mt-8 text-center">
           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-            © 2026 SDN 2 LAOT TADU - IKWAL PRESETIAWAN,S.T
+            {FOOTER_TEXT}
           </p>
         </div>
       </div>

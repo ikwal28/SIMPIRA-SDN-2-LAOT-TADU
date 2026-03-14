@@ -13,6 +13,7 @@ interface SiswaManagerProps {
 
 export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdate, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterKelas, setFilterKelas] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSiswa, setEditingSiswa] = useState<User | null>(null);
   const [formData, setFormData] = useState({
@@ -24,10 +25,21 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
 
   const safeData = Array.isArray(data) ? data : [];
 
-  const filteredData = safeData.filter(s => 
-    (s?.nama || (s as any)?.Nama || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (s?.['No Rekening'] || s?.noRekening || '').toString().includes(searchTerm)
-  );
+  const filteredData = safeData.filter(s => {
+    const sNama = (s?.nama || (s as any)?.Nama || '').toString().toLowerCase();
+    const sNoRek = (s?.['No Rekening'] || s?.noRekening || '').toString().toLowerCase();
+    const sKelas = (s?.kelas || (s as any)?.Kelas || '').toString().toUpperCase().replace('KELAS', '').trim();
+    
+    const matchesSearch = sNama.includes(searchTerm.toLowerCase()) || 
+                         sNoRek.includes(searchTerm.toLowerCase());
+    
+    // Map Roman to Arabic for comparison if needed
+    const romanMap: { [key: string]: string } = { 'I': '1', 'II': '2', 'III': '3', 'IV': '4', 'V': '5', 'VI': '6' };
+    const normalizedKelas = romanMap[sKelas] || sKelas;
+    
+    const matchesKelas = filterKelas === '' || normalizedKelas === filterKelas;
+    return matchesSearch && matchesKelas;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,15 +102,27 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
   return (
     <div className="h-full flex flex-col space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input 
-            type="text" 
-            placeholder="Cari No Rekening atau Nama..." 
-            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="relative flex-1 max-w-md flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input 
+              type="text" 
+              placeholder="Cari No Rekening atau Nama..." 
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <select 
+            className="px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-bold text-slate-700"
+            value={filterKelas}
+            onChange={(e) => setFilterKelas(e.target.value)}
+          >
+            <option value="">Semua Kelas</option>
+            {['1', '2', '3', '4', '5', '6'].map(k => (
+              <option key={k} value={k}>Kelas {k}</option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-wrap gap-2">
           <button 
@@ -137,7 +161,7 @@ export const SiswaManager: React.FC<SiswaManagerProps> = ({ data, onAdd, onUpdat
                     </span>
                   </td>
                   <td className="px-4 py-2 font-bold text-slate-700 text-sm">{siswa?.nama || (siswa as any)?.Nama || '-'}</td>
-                  <td className="px-4 py-2 text-slate-500 text-sm">{siswa?.kelas || (siswa as any)?.Kelas || '-'}</td>
+                  <td className="px-4 py-2 text-slate-500 text-sm">Kelas {siswa?.kelas || (siswa as any)?.Kelas || '-'}</td>
                   <td className="px-4 py-2 font-bold text-teal-600 text-sm">{formatCurrency(Number(siswa?.saldo || (siswa as any)?.Saldo || 0))}</td>
                   <td className="px-4 py-2">
                     <span className={cn(

@@ -13,6 +13,7 @@ interface GTKManagerProps {
 
 export const GTKManager: React.FC<GTKManagerProps> = ({ data, onAdd, onUpdate, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterJabatan, setFilterJabatan] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGTK, setEditingGTK] = useState<User | null>(null);
   const [formData, setFormData] = useState({
@@ -25,10 +26,16 @@ export const GTKManager: React.FC<GTKManagerProps> = ({ data, onAdd, onUpdate, o
 
   const safeData = Array.isArray(data) ? data : [];
 
-  const filteredData = safeData.filter(s => 
-    (s?.nama || (s as any)?.Nama || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (s?.['No Rekening'] || s?.noRekening || '').toString().includes(searchTerm)
-  );
+  const filteredData = safeData.filter(s => {
+    const sNama = (s?.nama || (s as any)?.Nama || '').toString().toLowerCase();
+    const sNoRek = (s?.['No Rekening'] || s?.noRekening || '').toString().toLowerCase();
+    const sJabatan = (s?.jabatan || (s as any)?.Jabatan || '').toString();
+    
+    const matchesSearch = sNama.includes(searchTerm.toLowerCase()) || 
+                         sNoRek.includes(searchTerm.toLowerCase());
+    const matchesJabatan = filterJabatan === '' || sJabatan === filterJabatan;
+    return matchesSearch && matchesJabatan;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,15 +106,27 @@ export const GTKManager: React.FC<GTKManagerProps> = ({ data, onAdd, onUpdate, o
   return (
     <div className="h-full flex flex-col space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input 
-            type="text" 
-            placeholder="Cari No Rekening atau Nama..." 
-            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="relative flex-1 max-w-md flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input 
+              type="text" 
+              placeholder="Cari No Rekening atau Nama..." 
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <select 
+            className="px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-bold text-slate-700"
+            value={filterJabatan}
+            onChange={(e) => setFilterJabatan(e.target.value)}
+          >
+            <option value="">Semua Jabatan</option>
+            {jabatans.map(j => (
+              <option key={j} value={j}>{j}</option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-wrap gap-2">
           <button 

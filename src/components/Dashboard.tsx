@@ -7,23 +7,23 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   History,
-  AlertCircle
+  AlertCircle,
+  Calendar,
+  Activity,
+  BarChart3
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
+  AreaChart, 
+  Area, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  Cell,
-  PieChart,
-  Pie
+  ResponsiveContainer
 } from 'recharts';
 import { DashboardStats, User, Transaction } from '../types';
 import { formatCurrency, cn } from '../utils';
-import { format } from 'date-fns';
+import { format, isSameDay, isSameMonth, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 interface DashboardProps {
@@ -38,7 +38,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
   const isAdminGTK = user.role === 'ADMINGTK';
   const isSuperAdmin = user.role === 'SUPERADMIN';
 
-  const COLORS = ['#10b981', '#0ea5e9', '#f59e0b', '#ef4444'];
+  const now = new Date();
+
+  const dailyIncoming = transactions
+    .filter(t => {
+      const isSetor = t.jenis === 'SETOR' || (t as any).Jenis === 'SETOR';
+      const tDate = t.tanggal || (t as any).Tanggal;
+      if (!isSetor || !tDate) return false;
+      try {
+        return isSameDay(new Date(tDate), now);
+      } catch (e) {
+        return false;
+      }
+    })
+    .reduce((sum, t) => sum + (t.nominal || (t as any).Nominal || 0), 0);
+
+  const monthlyIncoming = transactions
+    .filter(t => {
+      const isSetor = t.jenis === 'SETOR' || (t as any).Jenis === 'SETOR';
+      const tDate = t.tanggal || (t as any).Tanggal;
+      if (!isSetor || !tDate) return false;
+      try {
+        return isSameMonth(new Date(tDate), now);
+      } catch (e) {
+        return false;
+      }
+    })
+    .reduce((sum, t) => sum + (t.nominal || (t as any).Nominal || 0), 0);
 
   // Defensive checks for stats
   const safeStats = {
@@ -59,22 +85,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
   };
 
   return (
-    <div className="space-y-4">
-      {/* Welcome Section - Hidden for SISWA */}
-      {user.role !== 'SISWA' && (
-        <div className="bg-gradient-to-br from-primary to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
-          <div className="relative z-10">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang, {user.nama || (user as any).Nama || 'User'}!</h1>
-            <p className="text-white/80 text-sm md:text-base max-w-md">
-              {isUser 
-                ? 'Kelola tabunganmu dengan bijak untuk masa depan yang lebih cerah.' 
-                : 'Pantau dan kelola data tabungan sekolah dengan mudah dan transparan.'}
-            </p>
-          </div>
-          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -left-10 -top-10 w-48 h-48 bg-secondary/20 rounded-full blur-2xl" />
+    <div className="space-y-4 animate-in fade-in duration-500">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-black text-slate-800 tracking-tight">Dashboard Ringkasan</h2>
+          <p className="text-[11px] text-slate-500 font-medium">Selamat datang kembali, <span className="text-primary font-bold">{user.nama || (user as any).Nama || 'User'}</span></p>
         </div>
-      )}
+        <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-slate-100 shadow-sm">
+          <div className="px-3 py-1 bg-primary/10 text-primary rounded-lg flex items-center gap-2">
+            <Calendar size={14} />
+            <span className="text-[10px] font-bold">{format(new Date(), 'dd MMMM yyyy', { locale: id })}</span>
+          </div>
+        </div>
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -84,140 +108,231 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, user, transactions 
               <StatCard 
                 title="Total Tabungan Siswa" 
                 value={formatCurrency(safeStats.totalTabunganSiswa)} 
-                icon={Wallet} 
+                icon={<Wallet size={18} />} 
                 color="bg-teal-50 text-teal-600"
+                trend="+2.4%"
               />
             )}
             {(isSuperAdmin || isAdminGTK) && (
               <StatCard 
                 title="Total Tabungan GTK" 
                 value={formatCurrency(safeStats.totalTabunganGTK)} 
-                icon={TrendingUp} 
+                icon={<TrendingUp size={18} />} 
                 color="bg-cyan-50 text-cyan-600"
+                trend="+1.8%"
               />
             )}
             {(isSuperAdmin || isAdminSiswa) && (
               <StatCard 
                 title="Jumlah Siswa" 
                 value={safeStats.jumlahSiswa.toString()} 
-                icon={Users} 
+                icon={<Users size={18} />} 
                 color="bg-amber-50 text-amber-600"
+                trend="Aktif"
               />
             )}
             {(isSuperAdmin || isAdminGTK) && (
               <StatCard 
                 title="Jumlah GTK" 
                 value={safeStats.jumlahGTK.toString()} 
-                icon={UserCheck} 
+                icon={<UserCheck size={18} />} 
                 color="bg-orange-50 text-orange-600"
+                trend="Aktif"
               />
+            )}
+            {(isSuperAdmin || isAdminSiswa) && (
+              <>
+                <StatCard 
+                  title="Setoran Hari Ini" 
+                  value={formatCurrency(dailyIncoming)} 
+                  icon={<ArrowDownLeft size={18} />} 
+                  color="bg-emerald-50 text-emerald-600"
+                  trend="Harian"
+                />
+                <StatCard 
+                  title="Setoran Bulan Ini" 
+                  value={formatCurrency(monthlyIncoming)} 
+                  icon={<Activity size={18} />} 
+                  color="bg-indigo-50 text-indigo-600"
+                  trend="Bulanan"
+                />
+              </>
             )}
           </>
         ) : (
-          <>
-            <div className="col-span-1 sm:col-span-2 lg:col-span-4 space-y-4">
-              {user.role === 'SISWA' && (
-                <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl lg:rounded-3xl p-[2px] lg:p-1 shadow-lg shadow-orange-500/20">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-[14px] lg:rounded-[22px] p-4 lg:p-6 flex items-start lg:items-center gap-3 lg:gap-6">
-                    <div className="bg-gradient-to-br from-amber-100 to-orange-100 text-orange-600 p-3 lg:p-4 rounded-xl lg:rounded-2xl shrink-0 shadow-inner mt-0.5 lg:mt-0">
-                      <AlertCircle className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={2.5} />
-                    </div>
-                    <div>
-                      <h3 className="text-orange-600 font-extrabold text-sm lg:text-base uppercase tracking-widest mb-1 lg:mb-1.5">Pemberitahuan Penting</h3>
-                      <p className="text-slate-700 text-sm lg:text-base font-semibold leading-relaxed">
-                        UNTUK PENARIKAN SALDO DILAKUKAN SAAT SISWA TELAH MENYELESAIKAN PENDIDIKAN DI <span className="font-extrabold text-orange-600 bg-orange-50 px-1.5 py-0.5 lg:px-2 lg:py-0.5 rounded lg:rounded-md border border-orange-100 ml-1">SD NEGERI 2 LAOT TADU</span>
-                      </p>
-                    </div>
-                  </div>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-4 space-y-4">
+            {user.role === 'SISWA' && (
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center gap-3">
+                <div className="bg-amber-500 text-white p-2 rounded-lg shrink-0">
+                  <AlertCircle size={16} />
                 </div>
-              )}
-              
-              <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                    <Wallet size={32} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Saldo Anda</p>
-                    <h2 className="text-3xl font-bold text-slate-800">{formatCurrency(Number(user.saldo || (user as any).Saldo || 0))}</h2>
-                  </div>
+                <p className="text-[10px] lg:text-xs text-amber-800 font-bold leading-tight">
+                  PEMBERITAHUAN: PENARIKAN SALDO DILAKUKAN SAAT SISWA TELAH MENYELESAIKAN PENDIDIKAN DI <span className="underline">SD NEGERI 2 LAOT TADU</span>
+                </p>
+              </div>
+            )}
+            
+            <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                  <Wallet size={24} />
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-                  <div className="flex-1 bg-teal-50 p-4 rounded-2xl border border-teal-100">
-                    <div className="flex items-center gap-2 text-teal-600 mb-1">
-                      <ArrowUpRight size={16} />
-                      <span className="text-xs font-bold uppercase">No Rekening</span>
-                    </div>
-                    <p className="text-lg font-bold text-slate-800">{user.noRekening || (user as any)['No Rekening']}</p>
-                  </div>
-                  <div className="flex-1 bg-cyan-50 p-4 rounded-2xl border border-cyan-100">
-                    <div className="flex items-center gap-2 text-cyan-600 mb-1">
-                      <UserCheck size={16} />
-                      <span className="text-xs font-bold uppercase">Status</span>
-                    </div>
-                    <p className="text-lg font-bold text-slate-800">{user.status || (user as any).Status || 'AKTIF'}</p>
-                  </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saldo Anda</p>
+                  <h2 className="text-xl font-black text-slate-800">{formatCurrency(Number(user.saldo || (user as any).Saldo || 0))}</h2>
                 </div>
               </div>
-
-              {/* Transactions List */}
-              <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-                <div className="flex items-center gap-2 mb-6">
-                  <History className="text-primary" size={24} />
-                  <h3 className="text-lg font-bold text-slate-800">Riwayat Transaksi Terakhir</h3>
+              <div className="flex gap-2 w-full md:w-auto">
+                <div className="flex-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase">No Rekening</p>
+                  <p className="text-xs font-black text-slate-800 font-mono">{user.noRekening || (user as any)['No Rekening']}</p>
                 </div>
-                
-                <div className="space-y-4">
-                  {transactions.length > 0 ? (
-                    transactions.slice(0, 10).map((trx, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className={cn(
-                            "w-12 h-12 rounded-xl flex items-center justify-center",
-                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-teal-100 text-teal-600" : "bg-red-100 text-red-600"
-                          )}>
-                            {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
-                          </div>
-                          <div>
-                            <p className="font-bold text-slate-800">
-                              {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? 'Setoran Tunai' : 'Penarikan Tunai'}
-                            </p>
-                            <p className="text-xs text-slate-400">{safeFormatDate(trx?.tanggal || (trx as any)?.Tanggal)}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className={cn(
-                            "font-bold",
-                            (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-teal-600" : "text-red-600"
-                          )}>
-                            {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? '+' : '-'} {formatCurrency(Number(trx?.nominal || (trx as any)?.Nominal || 0))}
-                          </p>
-                          <p className="text-[10px] text-slate-400 uppercase tracking-wider">Petugas: {trx?.namaAdmin || (trx as any)?.NamaAdmin}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-slate-400">
-                      <History size={48} className="mx-auto mb-4 opacity-20" />
-                      <p>Belum ada transaksi</p>
-                    </div>
-                  )}
+                <div className="flex-1 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase">Status</p>
+                  <p className="text-xs font-black text-primary">{user.status || (user as any).Status || 'AKTIF'}</p>
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
+      </div>
+
+      {/* Charts and Lists */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {!isUser ? (
+          <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-black text-slate-800 text-sm flex items-center gap-2">
+                <BarChart3 size={16} className="text-primary" />
+                Statistik Tabungan
+              </h3>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Siswa</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">GTK</span>
+                </div>
+              </div>
+            </div>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={safeStats.chartData}>
+                  <defs>
+                    <linearGradient id="colorSiswa" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0D9488" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#0D9488" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorGTK" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0891B2" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#0891B2" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#94a3b8', fontSize: 9, fontWeight: 600}}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#94a3b8', fontSize: 9, fontWeight: 600}}
+                    tickFormatter={(value) => `Rp ${value/1000}k`}
+                  />
+                  <Tooltip 
+                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
+                    itemStyle={{fontSize: '11px', fontWeight: 'bold'}}
+                  />
+                  <Area type="monotone" dataKey="siswa" stroke="#0D9488" strokeWidth={2} fillOpacity={1} fill="url(#colorSiswa)" />
+                  <Area type="monotone" dataKey="gtk" stroke="#0891B2" strokeWidth={2} fillOpacity={1} fill="url(#colorGTK)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        ) : null}
+
+        <div className={cn(
+          "bg-white rounded-2xl p-5 border border-slate-100 shadow-sm",
+          isUser ? "lg:col-span-3" : "lg:col-span-1"
+        )}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-black text-slate-800 text-sm flex items-center gap-2">
+              <History size={16} className="text-primary" />
+              {isUser ? 'Riwayat Transaksi' : 'Aktivitas Terakhir'}
+            </h3>
+            {isUser && (
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {transactions.length} Transaksi
+              </span>
+            )}
+          </div>
+          
+          <div className={cn(
+            "space-y-3 overflow-y-auto pr-1 custom-scrollbar",
+            isUser ? "max-h-[400px]" : "max-h-[200px]"
+          )}>
+            {transactions.length > 0 ? (
+              transactions.slice(0, isUser ? 20 : 10).map((trx, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-50 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                      (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "bg-emerald-50 text-emerald-500" : "bg-rose-50 text-rose-500"
+                    )}>
+                      {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-slate-800">
+                        {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? 'Setoran' : 'Penarikan'}
+                      </p>
+                      <p className="text-[9px] text-slate-400 font-bold">{safeFormatDate(trx?.tanggal || (trx as any)?.Tanggal)}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={cn(
+                      "text-xs font-black",
+                      (trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? "text-emerald-600" : "text-rose-600"
+                    )}>
+                      {(trx?.jenis || (trx as any)?.Jenis) === 'SETOR' ? '+' : '-'} {formatCurrency(Number(trx?.nominal || (trx as any)?.Nominal || 0)).replace('Rp ', '')}
+                    </p>
+                    {!isUser && (
+                      <p className="text-[8px] text-slate-400 font-bold uppercase truncate max-w-[80px]">
+                        {trx?.nama || (trx as any)?.Nama}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-slate-300">
+                <Activity size={32} className="mx-auto mb-2 opacity-20" />
+                <p className="text-[10px] font-medium">Belum ada transaksi</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const StatCard = ({ title, value, icon: Icon, color }: any) => (
-  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-4", color)}>
-      <Icon size={24} />
+const StatCard = ({ title, value, icon, color, trend }: any) => (
+  <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group">
+    <div className="flex items-center justify-between mb-3">
+      <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform", color)}>
+        {icon}
+      </div>
+      <span className="text-[9px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">
+        {trend}
+      </span>
     </div>
-    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{title}</p>
-    <h3 className="text-xl font-bold text-slate-800">{value}</h3>
+    <div>
+      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">{title}</p>
+      <h4 className="text-base font-black text-slate-800 tracking-tight">{value}</h4>
+    </div>
   </div>
 );

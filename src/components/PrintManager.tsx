@@ -131,31 +131,31 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-4">
       {/* Header Section */}
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-slate-800">Cetak Rekening {type}</h2>
-        <p className="text-slate-500">Pilih nasabah untuk mencetak rekening koran atau cetak rekapan seluruh data.</p>
+      <div className="text-center space-y-1">
+        <h2 className="text-xl font-bold text-slate-800">Cetak Rekening {type}</h2>
+        <p className="text-xs text-slate-500">Pilih nasabah untuk mencetak rekening koran atau cetak rekapan seluruh data.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Individual Print Card */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-              <Printer size={20} />
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+              <Printer size={16} />
             </div>
-            <h3 className="font-bold text-slate-800">Cetak Rekening Koran</h3>
+            <h3 className="font-bold text-slate-800 text-sm">Cetak Rekening Koran</h3>
           </div>
 
           <div className="relative">
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Cari {type}</label>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Cari {type}</label>
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input 
                 type="text" 
                 placeholder="Ketik No Rekening atau Nama..." 
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -191,69 +191,69 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
           </div>
 
           {selectedUser ? (
-            <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl space-y-4 animate-in zoom-in duration-200">
+            <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl space-y-3 animate-in zoom-in duration-200">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-                    <UserIcon size={24} />
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                    <UserIcon size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Nasabah Terpilih</p>
-                    <p className="font-bold text-slate-800">{selectedUser?.nama || (selectedUser as any)?.Nama || '-'}</p>
-                    <p className="text-xs text-slate-400 font-mono">{selectedUser?.['No Rekening'] || selectedUser?.noRekening || '-'}</p>
+                    <p className="text-[9px] font-bold text-primary uppercase tracking-wider">Nasabah Terpilih</p>
+                    <p className="font-bold text-slate-800 text-xs">{selectedUser?.nama || (selectedUser as any)?.Nama || '-'}</p>
+                    <p className="text-[10px] text-slate-400 font-mono leading-none">{selectedUser?.['No Rekening'] || selectedUser?.noRekening || '-'}</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedUser(null)}
-                  className="text-xs font-bold text-red-500 hover:underline"
+                  className="text-[10px] font-bold text-red-500 hover:underline"
                 >
                   Ganti
                 </button>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-3 bg-white rounded-xl border border-slate-100">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold">Saldo</p>
-                  <p className="font-bold text-teal-600">{formatCurrency(Number(selectedUser?.saldo || (selectedUser as any)?.Saldo || 0))}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-2 bg-white rounded-lg border border-slate-100">
+                  <p className="text-[9px] text-slate-400 uppercase font-bold">Saldo</p>
+                  <p className="font-bold text-teal-600 text-xs">{formatCurrency(Number(selectedUser?.saldo || (selectedUser as any)?.Saldo || 0))}</p>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-100">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold">{type === 'SISWA' ? 'Kelas' : 'Jabatan'}</p>
-                  <p className="font-bold text-slate-700">{selectedUser?.kelas || (selectedUser as any)?.Kelas || selectedUser?.jabatan || (selectedUser as any)?.Jabatan || '-'}</p>
+                <div className="p-2 bg-white rounded-lg border border-slate-100">
+                  <p className="text-[9px] text-slate-400 uppercase font-bold">{type === 'SISWA' ? 'Kelas' : 'Jabatan'}</p>
+                  <p className="font-bold text-slate-700 text-xs">{selectedUser?.kelas || (selectedUser as any)?.Kelas || selectedUser?.jabatan || (selectedUser as any)?.Jabatan || '-'}</p>
                 </div>
               </div>
 
               <button 
                 onClick={handlePrintKoran}
-                className="w-full py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-teal-600 transition-all flex items-center justify-center gap-2 text-sm"
               >
-                <FileText size={20} />
+                <FileText size={16} />
                 Generate Rekening Koran
               </button>
             </div>
           ) : (
-            <div className="p-12 border-2 border-dashed border-slate-100 rounded-3xl flex flex-col items-center justify-center text-slate-300">
-              <UserIcon size={48} className="mb-3 opacity-20" />
-              <p className="font-medium">Pilih nasabah terlebih dahulu</p>
+            <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-300">
+              <UserIcon size={32} className="mb-2 opacity-20" />
+              <p className="text-xs font-medium">Pilih nasabah terlebih dahulu</p>
             </div>
           )}
         </div>
 
         {/* Summary Print Card */}
-        <div className="flex flex-col gap-6">
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
-                  <FileText size={20} />
+        <div className="flex flex-col gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+                  <FileText size={16} />
                 </div>
-                <h3 className="font-bold text-slate-800">Cetak Rekapan Seluruh {type}</h3>
+                <h3 className="font-bold text-slate-800 text-sm">Cetak Rekapan Seluruh {type}</h3>
               </div>
 
-              <div className="p-6 bg-secondary/5 border border-secondary/10 rounded-2xl space-y-4">
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Fitur ini akan mencetak laporan keuangan yang merangkum data seluruh {type} beserta saldo terakhir mereka dalam satu dokumen PDF.
+              <div className="p-4 bg-secondary/5 border border-secondary/10 rounded-xl space-y-2">
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Laporan keuangan yang merangkum data seluruh {type} beserta saldo terakhir mereka.
                 </p>
-                <div className="flex items-center gap-4 text-xs font-bold text-secondary uppercase tracking-widest">
+                <div className="flex items-center gap-4 text-[10px] font-bold text-secondary uppercase tracking-widest">
                   <span>Total Data: {safeUsers.length} Nasabah</span>
                 </div>
               </div>
@@ -261,47 +261,47 @@ export const PrintManager: React.FC<PrintManagerProps> = ({ type, users, transac
 
             <button 
               onClick={handlePrintRekapan}
-              className="w-full mt-6 py-4 bg-secondary text-white rounded-2xl font-bold shadow-lg shadow-secondary/20 hover:bg-cyan-600 transition-all flex items-center justify-center gap-2"
+              className="w-full mt-4 py-2.5 bg-secondary text-white rounded-xl font-bold shadow-lg shadow-secondary/20 hover:bg-cyan-600 transition-all flex items-center justify-center gap-2 text-sm"
             >
-              <Printer size={20} />
+              <Printer size={16} />
               Cetak Rekapan Semua {type}
             </button>
           </div>
 
           {type === 'SISWA' && (
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600">
-                    <FileText size={20} />
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center text-amber-600">
+                    <FileText size={16} />
                   </div>
-                  <h3 className="font-bold text-slate-800">Cetak Rekapan per Kelas</h3>
+                  <h3 className="font-bold text-slate-800 text-sm">Cetak Rekapan per Kelas</h3>
                 </div>
 
                 <div className="relative">
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Pilih Kelas</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pilih Kelas</label>
                   <div className="relative">
                     <select
                       value={selectedClass}
                       onChange={(e) => setSelectedClass(e.target.value)}
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 appearance-none font-bold text-slate-700"
+                      className="w-full pl-4 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 appearance-none font-bold text-slate-700 text-sm"
                     >
                       <option value="">-- Pilih Kelas --</option>
                       {classes.map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 mt-6">
+              <div className="space-y-3 mt-4">
                 <button 
                   onClick={handlePrintRekapanKelas}
-                  className="w-full py-4 bg-amber-500 text-white rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-amber-500 text-white rounded-xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 transition-all flex items-center justify-center gap-2 text-sm"
                 >
-                  <Printer size={20} />
+                  <Printer size={16} />
                   Cetak Rekapan Kelas
                 </button>
               </div>

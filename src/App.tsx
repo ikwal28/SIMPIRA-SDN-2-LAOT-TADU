@@ -186,14 +186,14 @@ export default function App() {
         }));
       }
 
-      // Initial load for users
-      if (user.role === 'SISWA' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('SISWA', String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nisn || (user as any).NISN || '')).then(res => {
+      // Initial load for users and admins who need stats
+      if ((user.role === 'SISWA' || user.role === 'ADMINSISWA' || user.role === 'SUPERADMIN') && activeTab === 'dashboard') {
+        promises.push(api.getTransactions('SISWA', user.role === 'SISWA' ? String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nisn || (user as any).NISN || '') : undefined).then(res => {
           if (Array.isArray(res)) setTrxSiswa(res);
         }));
       }
-      if (user.role === 'GTK' && activeTab === 'dashboard') {
-        promises.push(api.getTransactions('GTK', String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nip || (user as any).NIP || '')).then(res => {
+      if ((user.role === 'GTK' || user.role === 'ADMINGTK' || user.role === 'SUPERADMIN') && activeTab === 'dashboard') {
+        promises.push(api.getTransactions('GTK', user.role === 'GTK' ? String(user.username || user.noRekening || (user as any)['No Rekening'] || (user as any)['No. Rekening'] || (user as any).nip || (user as any).NIP || '') : undefined).then(res => {
           if (Array.isArray(res)) setTrxGTK(res);
         }));
       }
