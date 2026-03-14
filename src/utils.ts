@@ -163,17 +163,17 @@ export function generateStudentCardPDF(students: User[]) {
     const x = marginX;
     const y = marginY + cardsOnPage * (cardHeight + gap);
 
-    // Card Background (Soft Pastel Rounded)
-    doc.setDrawColor(200, 230, 255); // Light Blue Border
-    doc.setFillColor(255, 255, 255);
+    // Card Background (Cream Theme)
+    doc.setDrawColor(210, 190, 160); // Warm Tan Border
+    doc.setFillColor(255, 253, 225); // Cream Background
     doc.roundedRect(x, y, cardWidth, cardHeight, 3, 3, 'FD');
 
     // Playful Accents (Subtle Bubbles)
-    doc.setFillColor(255, 245, 220); // Soft Yellow
+    doc.setFillColor(255, 235, 180); // Warm Yellow
     doc.circle(x + 5, y + 5, 2, 'F');
-    doc.setFillColor(220, 255, 230); // Soft Green
+    doc.setFillColor(200, 240, 210); // Soft Sage Green
     doc.circle(x + cardWidth - 5, y + cardHeight - 5, 3, 'F');
-    doc.setFillColor(255, 230, 245); // Soft Pink
+    doc.setFillColor(255, 210, 225); // Soft Rose
     doc.circle(x + cardWidth - 12, y + 6, 1.5, 'F');
 
     // Vertical Divider (Clean Line)
@@ -184,13 +184,17 @@ export function generateStudentCardPDF(students: User[]) {
     // LEFT SIDE: Student Info
     // Header Left
     doc.setFillColor(13, 148, 136); // Teal 600
-    doc.roundedRect(x + 5, y + 5, cardWidth / 2 - 10, 12, 1.5, 1.5, 'F');
+    doc.roundedRect(x + 5, y + 5, cardWidth / 2 - 10, 14, 1.5, 1.5, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('SIMPIRA MENABUNG', x + cardWidth / 4, y + 10.5, { align: 'center' });
+    doc.text('SIMPIRA MENABUNG', x + cardWidth / 4, y + 9.5, { align: 'center' });
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'normal');
+    doc.text('simpira.my.id', x + cardWidth / 4, y + 12.5, { align: 'center' });
     doc.setFontSize(7);
-    doc.text('KARTU REKENING SISWA', x + cardWidth / 4, y + 14.5, { align: 'center' });
+    doc.setFont('helvetica', 'bold');
+    doc.text('KARTU REKENING SISWA', x + cardWidth / 4, y + 16, { align: 'center' });
 
     // Details
     doc.setTextColor(40, 40, 40);
@@ -201,7 +205,7 @@ export function generateStudentCardPDF(students: User[]) {
     const status = student.status || (student as any).Status || 'AKTIF';
     const password = student.password || (student as any).Password || '-';
 
-    let textY = y + 25;
+    let textY = y + 26;
     const labelX = x + 8;
     const valueX = x + 32;
 
@@ -213,7 +217,7 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text(String(noRek), valueX, textY);
     
     // Row 2: Nama
-    textY += 6;
+    textY += 5.5;
     doc.setFont('helvetica', 'normal');
     doc.text('Nama Siswa', labelX, textY);
     doc.text(':', valueX - 3, textY);
@@ -221,7 +225,7 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text(String(nama), valueX, textY);
     
     // Row 3: Status
-    textY += 6;
+    textY += 5.5;
     doc.setFont('helvetica', 'normal');
     doc.text('Status Akun', labelX, textY);
     doc.text(':', valueX - 3, textY);
@@ -229,7 +233,7 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text(String(status), valueX, textY);
 
     // Login Info Section
-    textY += 8;
+    textY += 7;
     doc.setDrawColor(13, 148, 136);
     doc.setLineWidth(0.15);
     doc.line(labelX, textY - 4, x + cardWidth / 2 - 8, textY - 4);
@@ -240,7 +244,7 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text('INFORMASI LOGIN APLIKASI', labelX, textY);
     
     // Row 4: User
-    textY += 6;
+    textY += 5.5;
     doc.setTextColor(40, 40, 40);
     doc.setFont('helvetica', 'normal');
     doc.text('Username', labelX, textY);
@@ -249,18 +253,18 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text(String(noRek), valueX, textY);
     
     // Row 5: Pass
-    textY += 6;
+    textY += 5.5;
     doc.setFont('helvetica', 'normal');
     doc.text('Password', labelX, textY);
     doc.text(':', valueX - 3, textY);
     doc.setFont('helvetica', 'bold');
     doc.text(String(password), valueX, textY);
 
-    // Footer Left (URL)
+    // Footer Left (Decorative URL)
     doc.setTextColor(13, 148, 136);
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
-    doc.text('simpira.my.id', x + cardWidth / 4, y + cardHeight - 5, { align: 'center' });
+    doc.text('---------- simpira.my.id ----------', x + cardWidth / 4, y + cardHeight - 4, { align: 'center' });
 
     // RIGHT SIDE: Instructions
     // Header Right
