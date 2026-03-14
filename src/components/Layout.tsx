@@ -199,11 +199,13 @@ export const Layout: React.FC<{ children: React.ReactNode; sidebarProps: Sidebar
         <div className="flex-1 overflow-y-auto p-4 lg:p-8 custom-scrollbar">
           {children}
           
-          <footer className="mt-12 pt-8 pb-4 border-t border-slate-100 text-center">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-              {FOOTER_TEXT}
-            </p>
-          </footer>
+          {activeTab === 'dashboard' && (
+            <footer className="mt-12 pt-8 pb-4 border-t border-slate-100 text-center">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                {FOOTER_TEXT}
+              </p>
+            </footer>
+          )}
         </div>
 
         {/* Mobile Bottom Nav */}
