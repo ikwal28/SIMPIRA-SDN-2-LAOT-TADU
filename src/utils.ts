@@ -191,7 +191,7 @@ export function generateStudentCardPDF(students: User[]) {
     doc.text('SIMPIRA MENABUNG', x + cardWidth / 4, y + 9.5, { align: 'center' });
     doc.setFontSize(6);
     doc.setFont('helvetica', 'normal');
-    doc.text('simpira.my.id', x + cardWidth / 4, y + 12.5, { align: 'center' });
+    doc.text('Simpanan Pintar Rajin Menabung', x + cardWidth / 4, y + 12.5, { align: 'center' });
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.text('KARTU REKENING SISWA', x + cardWidth / 4, y + 16, { align: 'center' });
